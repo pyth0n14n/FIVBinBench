@@ -1,0 +1,13 @@
+{
+    "binary json filename"  : "my_research/x86/jsons/binary-details-no-init.json",
+    "mode"                  : "fault",
+    "output directory name" : "my_research/x86/outputs/fault_bf_reg/",
+    "threads"               : "6",
+    "fault model filename"  : "my_research/x86/faultmodels/verifypin_bf_reg.txt",
+    "checkpoints"           : "no",
+    "number of checkpoints" : "notused",
+    "equivalents"           : "no",
+    "timeit"                : "yes",
+    "display disassembly"   : "no",
+    "max instructions"      : "1000"
+}

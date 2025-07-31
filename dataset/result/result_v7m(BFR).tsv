@@ -1,0 +1,221 @@
+IP	reg	mask	opcode	oprand	ARCHIE	ARMORY	FaultFinder (rehosting)	FaultFinder	Grand Truth	Type	Reason
+8000048		org	str	"r1, [r7, #8] ; a2 (g_cardPin)"	-	-	-	-	-	-	Stack Argument r1 (g_cardPin=20000008) for byteArrayCompare
+8000048	R1	0x10	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o		o	o	o	Initial state	0x20000018; Set to 0 Attack Possible
+8000048	R1	0x100	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x1000	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x20	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x200	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x2000000	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o		o		o	Initial state	"0x22000008 is written, and read from [0x2200_0008]. Bit-band region. (>> 1) & 0b1 = (0x300>>1)&0b1=0; if i has an offset, behavior is unpredictable, but in terms of bitband calculation, this is equivalent to access to 0x2200_0008."
+8000048	R1	0x20000000	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o		o		o	Initial state	[r7+8]=0x2000_0008 ^ 0x2000_0000=0x08; [0x08]=0x0000_0000 Attack Possible
+8000048	R1	0x4	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o		o	o	o	Initial state	
+8000048	R1	0x40	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x400	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x80	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R1	0x800	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o	o	o	o	o	-	
+8000048	R7	0x1	str	"r1, [r7, #8] ; a2 (g_cardPin)"	o		o		o	Invalid access	Store destination is shifted by 1; 0x20001fd0: 20 |00000800| 00; then load data from [0x0000_0800]=0000 not [0x2000_1fd0]=1234 (g_cardPin). Some tools treat MEM[0x1000<] as non-mapped regions.
+800004a		org	mov	"r3, r2"	-	-	-	-	-	-	Move of PIN_SIZE (r2)=0x4
+800004a	R2	0x4	mov	"r3, r2"	o	o	o	o	o	-	r3=0 Attack Possible
+800004a	R3	0x4	mov	"r3, r2"	o					Tool dependent	"Effectively instruction is skipped by revert, Attack Not Possible; or overwritten afterwards, Attack Not Possible"
+800004c		org	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	-	-	-	-	-	-	"Store of PIN_SIZE (r3)=0x4 to Stack; r7=0x20001fc8; If Stack is not used after this and writable, Attack Possible"
+800004c	R3	0x4	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	r3=0 Attack Possible
+800004c	R7	0x1	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	"From g_cardPin Lsbyte=0x08->0x04, g_cardPin=g_userPin; and PIN_SIZE=0, Attack Possible"
+800004c	R7	0x10	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x100	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x1000	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x2	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x200	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x2000000	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o		o		o	Initial state	"0x2200_1fc8; In bit-band, unpredictable, but if calculated according to the rules, bit 2 of 0x200000FE is set to 0; originally zero, so no change."
+800004c	R7	0x20000000	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o		o			Write attribute	"Write to 0x0000_1fc8; since there is no write attribute, Attack Not Possible"
+800004c	R7	0x4	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x40	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x400	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x8	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x80	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004c	R7	0x800	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"	o	o	o	o	o	-	
+800004e		org	movs	"r3, #0"	-	-	-	-	-	-	Initialization of loop counter
+800004e	R3	0x4	movs	"r3, #0"	o					Tool dependent	
+8000050		org	str	"r3, [r7, #20] ; i = 0"	-	-	-	-	-	-	Store of loop counter to Stack; Attack Possible if r3 >= 4
+8000050	R3	0x10	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x100	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x1000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x10000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x100000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x1000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x10000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x20	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x200	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x2000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x20000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x200000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x2000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x20000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x4	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x40	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x400	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x4000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x40000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x400000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x4000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x40000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x8	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x80	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x800	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x8000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x80000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x800000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000050	R3	0x8000000	str	"r3, [r7, #20] ; i = 0"	o	o	o	o	o	-	
+8000068		org	movs	"r3, #0"	-	-	-	-	-	-	return value r3=0
+8000068	R3	0x1	movs	"r3, #0"	o					Tool dependent	"Instruction is skipped or overwritten afterwards, Attack Not Possible"
+8000072		org	ldrb	"r3, [r7, #7] ; PIN_SIZE"	-	-	-	-	-	-	Loading PIN_SIZE into r3 (i < PIN_SIZE); r7=0x20001fc8; RAM=0x2000_0000~0x2000_2000
+8000072	R3	0x4	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o					Tool dependent	"Overwritten afterwards or equivalent to instruction skip, Attack Not Possible"
+8000072	R7	0x10	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x100	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x1000	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x2	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x200	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x2000000	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o		o		o	Initial state	"0x2200_1fc8; read from bit-band area; load bit 2 of 0x2000_00FE; since 0x2000_00FE = 0, Attack Possible."
+8000072	R7	0x20000000	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o		o		o	Initial state	"Since [0x0000_1fc8]=0, the loop does not iterate and ends immediately, Attack Possible"
+8000072	R7	0x40	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x400	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x8	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	"0x20001fc7: from 0x00, Attack Possible"
+8000072	R7	0x80	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000072	R7	0x800	ldrb	"r3, [r7, #7] ; PIN_SIZE"	o	o	o	o	o	-	
+8000074		org	ldr	"r2, [r7, #20] ; i"	-	-	-	-	-	-	Loading i into r2 (i < PIN_SIZE)
+8000074	R2	0x4	ldr	"r2, [r7, #20] ; i"	o					Tool dependent	"Overwritten afterwards or equivalent to instruction skip, Attack Not Possible"
+8000074	R7	0x10	ldr	"r2, [r7, #20] ; i"	o	o	o	o	o	-	"[r7^0x10 + 20]=0x20001fec: from 0x08000191, Attack Possible"
+8000074	R7	0x8	ldr	"r2, [r7, #20] ; i"	o	o	o	o	o	-	"0x20001fd4: from 0x20000004, Attack Possible"
+8000076		org	cmp	"r2, r3 ; i < PIN_SIZE"	-	-	-	-	-	-	"i < PIN_SIZE; if r2 >= PIN_SIZE or r3 <= 0, Attack Possible"
+8000076	R2	0x10	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x100	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x1000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x10000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x100000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x1000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x10000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x20	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x200	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x2000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x20000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x200000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x2000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x20000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x4	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x40	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x400	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x4000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x40000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x400000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x4000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x40000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x8	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x80	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x800	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x8000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x80000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x800000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R2	0x8000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R3	0x4	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	
+8000076	R3	0x80000000	cmp	"r2, r3 ; i < PIN_SIZE"	o	o	o	o	o	-	r3 becomes negative (-(0x1_0000_0000-4+1) < 0)
+800007c		org	mov	"r0, r3"	-	-	-	-	-	-	return value of byteArrayCompare
+800007c	R3	0x1	mov	"r0, r3"	o	o	o	o	o	-	
+8000084		org	bx	lr	-	-	-	-	-	-	Return address to verifyPin: 80000a5 (due to THUMB)
+8000084	LR	0x4	bx	lr	o	o	o	o	o	-	"80000a0 = byteArrayCompare: r0=0, r1=*g_cardPin, r2=0, retry byteArrayCompare; since PIN_SIZE=0, Attack Possible"
+8000084	LR	0x8	bx	lr	o		o			Write attribute	"8000ac = skip result comparison of byteArrayCompare; whether strb r2 is allowed; since r3=0, access to flash alias without write attribute"
+8000084	LR	0x80	bx	lr	o	o	o	o	o	-	"8000024=inside vector_table, 0x00 is set -> same state as mov r0, r0, so Attack Possible"
+8000086		org	push	"{r7, lr}"	-	-	-	-	-	-	Return address to main: 0x08000191
+8000086	LR	0x8	push	"{r7, lr}"	o	o	o	o	o	-	0x08000199: jump instruction to super_secret function
+800008e		org	strb	"r2, [r3, #0] ; g_authenticated = 0"	-	-	-	-	-	-	"g_authenticated = 0; if g_authenticated != 0, Attack Possible"
+800008e	R2	0x1	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x10	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x2	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x20	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x4	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x40	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x8	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800008e	R2	0x80	strb	"r2, [r3, #0] ; g_authenticated = 0"	o	o	o	o	o	-	
+800009a		org	movs	"r2, #4 ; PIN_SIZE"	-	-	-	-	-	-	"r2= PIN_SIZE; Argument for byteArrayCompare; If IS, Attack Possible"
+800009a	R2	0x4	movs	"r2, #4 ; PIN_SIZE"	o					Tool dependent	
+800009c		org	ldr	"r1, [pc, #64]"	-	-	-	-	-	-	r1=*g_cardPin=20000008; Argument for byteArrayCompare
+800009c	PC	0x200	ldr	"r1, [pc, #64]"	o					Unexplainable	"r1=0; will be read from [i]; since [0]=0x20002000 (end of SP), != g_userPin, so Attack Not Possible"
+800009c	PC	0x400	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	PC	0x800	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	PC	0x1000	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	PC	0x2000	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	PC	0x4000	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	PC	0x8000	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	PC	0x10000	ldr	"r1, [pc, #64]"	o					Unexplainable	
+800009c	R1	0x20000000	ldr	"r1, [pc, #64]"	o					Tool dependent	"Overwritten afterwards; since r1=0x08, Attack Not Possible"
+800009c	R1	0x4	ldr	"r1, [pc, #64]"	o					Tool dependent	"Overwritten afterwards; since r1=2000000c, [r1]=0, Attack Possible"
+80000a4		org	mov	"r3, r0"	-	-	-	-	-	-	Move of byteArrayCompare return value
+80000a4	R0	0x1	mov	"r3, r0"	o	o	o	o	o	-	"Equivalent to ret 1, Attack Possible"
+80000a6		org	cmp	"r3, #1"	-	-	-	-	-	-	"if byteArrayCompare != 1, then r3=1; branch with Z=0"
+80000a6	R3	0x1	cmp	"r3, #1"	o	o	o	o	o	-	"Since 1==1, Attack Possible"
+80000c8		org	ldr	"r3, [pc, #16]"	-	-	-	-	-	-	Load of *g_authenticated
+80000c8	R3	0x1	ldr	"r3, [pc, #16]"	o					Tool dependent	"Since r3=0x01200000, access not possible (side effect afterwards)"
+80000ca		org	strb	"r2, [r3, #0]"	-	-	-	-	-	-	g_ptc = g_ptc-1 = 2
+80000ca	R3	0x1	strb	"r2, [r3, #0]"	o	o	o	o	o	-	"Since r3=0x2000_0000=g_authenticated, Attack Possible"
+8000118		org	movs	"r3, #0"	-	-	-	-	-	-	"Loop counter i=0 in init; if i >= PIN_SIZE, Attack Possible; also Attack Possible in IS"
+8000118	R3	0x20000000	movs	"r3, #0"	o					Tool dependent	Unsuitable due to instruction skipping/postfix assignment
+800011a		org	str	"r3, [r7, #4] ; i = 0"	-	-	-	-	-	-	Loop counter i=0 in init; Attack Possible if r3 >= 4
+800011a	R3	0x10	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x100	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x1000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x10000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x100000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x1000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x10000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x20	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x200	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x2000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x20000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x200000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x2000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x20000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x4	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x40	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x400	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x4000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x40000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x400000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x4000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x40000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x8	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x80	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x800	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x8000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x80000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x800000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+800011a	R3	0x8000000	str	"r3, [r7, #4] ; i = 0"	o		o	o	o	Unexplainable	
+8000136		org	ldr	"r3, [r7, #4]"	-	-	-	-	-	-	Load of loop counter into r3; branch target is the setting of g_cardPin; starts with r3=0; Attack Possible if r3 >= 4
+8000136	R7	0x10	ldr	"r3, [r7, #4]"	o		o	o	o	Initial state	"[r7+4]=[0x20001ff4]=0x080001b1, Attack Possible"
+8000136	R7	0x8	ldr	"r3, [r7, #4]"	o		o	o	o	Initial state	"[r7+4]=[0x20001fec]=0x20001ff0, Attack Possible"
+8000138		org	cmp	"r3, #3"	-	-	-	-	-	-	Judgement of i<4; branch if Z=1 or N=1; Attack Possible if r3 >= 4
+8000138	R3	0x10	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x100	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x1000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x10000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x100000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x1000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x10000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x20	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x200	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x2000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x20000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x200000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x2000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x20000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x4	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x40	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x400	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x4000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x40000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x400000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x4000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x40000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x8	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x80	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x800	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x8000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x80000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x800000	cmp	"r3, #3"	o		o	o	o	Unexplainable	
+8000138	R3	0x8000000	cmp	"r3, #3"	o		o	o	o	Unexplainable	

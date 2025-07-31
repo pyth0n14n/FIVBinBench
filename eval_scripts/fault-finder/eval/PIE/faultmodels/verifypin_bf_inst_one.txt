@@ -1,0 +1,6 @@
+Instructions: 164-164
+    Instruction: no object used.
+        Op_codes: ALL
+            Lifespan: 1,revert
+                Operations: xOR
+                    Masks:1<0<64

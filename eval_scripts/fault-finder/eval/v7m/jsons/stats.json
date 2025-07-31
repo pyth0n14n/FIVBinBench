@@ -1,0 +1,12 @@
+{
+    "binary json filename"  : "my_research/v7m/jsons/binary-details.json",
+    "mode"                  : "stats",
+    "output directory name" : "stdout",
+    "threads"               : "notused",
+    "fault model filename"  : "notused",
+    "checkpoints"           : "no",
+    "number of checkpoints" : "notused",
+    "equivalents"           : "no",
+    "timeit"                : "no",
+    "display disassembly"   : "yes"
+}   

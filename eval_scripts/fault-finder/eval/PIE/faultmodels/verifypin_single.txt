@@ -1,0 +1,5 @@
+Instructions: 196-196
+    Instruction Pointer: no object used.
+        Op_codes: ALL
+            Lifespan: 0
+                Operations: SKIP

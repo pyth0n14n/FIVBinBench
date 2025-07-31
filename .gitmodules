@@ -1,0 +1,21 @@
+[submodule "tools/armory"]
+	path = tools/armory
+	url = https://github.com/pyth0n14n/arm-fault-simulator
+[submodule "tools/fault-finder"]
+	path = tools/fault-finder
+	url = https://github.com/pyth0n14n/fault-finder
+[submodule "tools/archie"]
+	path = tools/archie
+	url = https://github.com/Fraunhofer-AISEC/archie.git
+[submodule "tools/chaosduck"]
+	path = tools/chaosduck
+	url = https://github.com/zavalyshyn/chaosduck.git
+[submodule "tools/FaultArm"]
+	path = tools/FaultArm
+	url = https://github.com/UCdasec/FaultArm.git
+[submodule "tools/fault-injection-simulation"]
+	path = tools/fault-injection-simulation
+	url = https://github.com/nikals99/fault-injection-simulation.git
+[submodule "tools/FaultInjectionSimulator"]
+	path = tools/FaultInjectionSimulator
+	url = https://github.com/misc0110/FaultInjectionSimulator.git

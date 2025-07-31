@@ -1,0 +1,89 @@
+{
+    "binary filename" : "eval/bins/verifypin_0_x86.bin",
+    "cpu"             : "486",
+    "unicorn arch"    : "x86",
+    "unicorn mode"    : "64",
+    "capstone arch"   : "x86",
+    "capstone mode"   : "64",
+    "memory address"  : "0x555555554000",
+    "memory size"     : "0x5000",
+    "other memory"    :
+    [
+        {
+            "address"   :   "0x7ffff7da0000",
+            "size"      :         "0x215000"
+        },
+        {
+            "address"   :   "0x7ffff7fbd000",
+            "size"      :          "0x42000"
+        }
+    ],
+    "stack start"     : "0x7fffffffd8a8",
+    "stack address"   : "0x7ffffffdd000",
+    "stack size"      :        "0x22000",
+    "code offset"     : "0x00000000",
+    "code start"      : "0x000012f6",
+    "code end"        : "0x00001357",
+    "fault start"     : "0x000012f6",
+    "fault end"       : "0x00001308",
+    "hard stops"      :
+    [
+        {
+            "location": "fixed address",
+            "address" : "0x5555555552f4"
+        }
+    ],
+    "set registers" :
+    [
+    ],
+    "outputs"       : 
+    [
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "rip",
+            "length"        : "8",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "rsp",
+            "length"        : "8",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "rbp",
+            "length"        : "8",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "rsi",
+            "length"        : "8",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "eflags",
+            "length"        : "4",
+            "offset"        : ""
+        }        
+    ],
+    "skips":
+    [
+        { 
+            "address"       : "0x1337",
+            "bytes"         : "5"
+        }
+    ],
+    "timeout":"0",
+    "filter results": "no",
+    "set memory"    :
+    [
+    ]
+}

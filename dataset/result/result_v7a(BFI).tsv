@@ -1,0 +1,406 @@
+IP	mask	code	opcode	oprand	ChaosDuck	FaultFinder (rehosting)	FaultFinder	Grand Truth	Type	Reason
+5a4	0	e50b0010	str	"r0, [fp, #-0x10]"	-	-	-	-	-	r0 = *g_userPin
+5a4	1000	e50b1010	str	"r1, [fp, #-0x10]"	o	o	o	o	-	"From storing r1 = *g_cardPin, a1 equals a2 -> Attack Possible"
+5a8	0	e50b1014	str	"r1, [fp, #-0x14]"	-	-	-	-	-	r1 = *g_cardPin
+5a8	1000	e50b0014	str	"r0, [fp, #-0x14]"	o	o	o	o	-	"From storing r0 = *g_userPin, a1 equals a2 -> Attack Possible"
+5a8	2000	e50b3014	str	"r3, [fp, #-0x14]"	o	o	o	o	-	"r3 = r0, so a1 equals a2 -> Attack Possible"
+5a8	8000	e50b9014	str	"sb, [fp, #-0x14]"	o	o		o	Initial state	Access to sb = 0x40828cd8 <_rtld_global_ro>: 0x00000000 -> Attack Possible
+5ac	0	e1a03002	mov	"r3, r2"	-	-	-	-	-	r3 = r2 = PIN_SIZE
+5ac	4	e1a03006	mov	"r3, r6"			o		Initial state	From r6 = 0x00401ebc -> Attack Failed
+5ac	8	e1a0300a	mov	"r3, sl"	o	o	o	o	-	From sl = 0 -> Attack Possible
+5ac	10	e1a03012	lsl	"r3, r2, r0"	o	o	o	o	-	"r3 = r2 << r0 -> r3 = ..., and PIN_SIZE via strb gives size = 0 -> Attack Possible"
+5ac	20	e1a03022	lsr	"r3, r2, #0x20"	o	o	o	o	-	r3 = r2 >> r0 -> 0 -> Attack Possible
+5ac	40	e1a03042	asr	"r3, r2, #0x20"	o	o	o	o	-	From r2 = 4 and asr = lsr -> Attack Possible
+5ac	400	e1a03402	lsl	"r3, r2, #8"	o	o	o	o	-	r3 = r2 << 8 -> 0x400; PIN_SIZE via strb gives size = 0 -> Attack Possible
+5ac	800	e1a03802	lsl	"r3, r2, #0x10"	o	o	o	o	-	r3 = r2 << 0x10; PIN_SIZE via strb gives size = 0 -> Attack Possible
+5b0	0	e54b3015	strb	"r3, [fp, #-0x15]"	-	-	-	-	-	"Storing PIN_SIZE; if no side effect, size = 0 -> Attack Possible"
+5b0	1	e54b3014	strb	"r3, [fp, #-0x14]"	o	o	o	o	-	Store to g_cardPin -> No effect
+5b0	2	e54b3017	strb	"r3, [fp, #-0x17]"	o	o	o	o	-	Store to g_cardPin -> No effect
+5b0	4	e54b3011	strb	"r3, [fp, #-0x11]"	o	o	o	o	-	From unused region -> No effect
+5b0	8	e54b301d	strb	"r3, [fp, #-0x1d]"	o	o	o	o	-	From unused region -> No effect
+5b0	10	e54b3005	strb	"r3, [fp, #-5]"	o	o	o	o	-	No effect
+5b0	20	e54b3035	strb	"r3, [fp, #-0x35]"	o	o	o	o	-	From unused region -> No effect
+5b0	40	e54b3055	strb	"r3, [fp, #-0x55]"	o	o	o	o	-	From unused region -> No effect
+5b0	80	e54b3095	strb	"r3, [fp, #-0x95]"	o	o	o	o	-	From unused region -> No effect
+5b0	100	e54b3115	strb	"r3, [fp, #-0x115]"	o	o	o	o	-	From unused region -> No effect
+5b0	200	e54b3215	strb	"r3, [fp, #-0x215]"	o	o	o	o	-	From unused region -> No effect
+5b0	400	e54b3415	strb	"r3, [fp, #-0x415]"	o	o	o	o	-	From unused region -> No effect
+5b0	800	e54b3815	strb	"r3, [fp, #-0x815]"	o	o	o	o	-	From unused region -> No effect
+5b0	4000	e54b7015	strb	"r7, [fp, #-0x15]"			o		Initial state	From r7 = 0x409b0e54 -> Attack Failed
+5b0	20000	e5493015	strb	"r3, [sb, #-0x15]"		o			Write attribute	From ro area -> Attack Failed
+5b0	40000	e54f3015	strb	"r3, [pc, #-0x15]"		o	o		Write attribute	From .text having RE attribute -> Attack Failed
+5b0	100000	e55b3015	ldrb	"r3, [fp, #-0x15]"	o	o	o	o	-	Load operation -> No effect
+5b0	800000	e5cb3015	strb	"r3, [fp, #0x15]"	o	o	o	o	-	From unused region -> No effect
+5b0	2000000	e74b3015	smlald	"r3, fp, r5, r0"	o	o	o	o	-	"{fp:r3} = {fp:r3} + ((int16)r5[15:0] ÁE(int16)r0[15:0]) + ((int16)r5[31:16] ÁE(int16)r0[31:16]); r0 = 0x402050, r3 = 4, r5 = 1 -> fp = fp, r3 = 0x2054"
+5b0	80000000	654b3015	strbvs	"r3, [fp, #-0x15]"	o	o	o	o	-	strb if OVFL = 1; since V = 0 -> Attack Possible
+5b4	0	e3a03000	mov	"r3, #0"	-	-	-	-	-	"int i = 0; since r3 = PIN_SIZE, either skip or r3 >= PIN_SIZE -> Attack Possible"
+5b4	4	e3a03004	mov	"r3, #4"	o	o	o	o	-	r3>=
+5b4	8	e3a03008	mov	"r3, #8"	o	o	o	o	-	r3>=
+5b4	10	e3a03010	mov	"r3, #0x10"	o	o	o	o	-	r3>=
+5b4	20	e3a03020	mov	"r3, #0x20"	o	o	o	o	-	r3>=
+5b4	40	e3a03040	mov	"r3, #0x40"	o	o	o	o	-	r3>=
+5b4	80	e3a03080	mov	"r3, #0x80"	o	o	o	o	-	r3>=
+5b4	1000	e3a02000	mov	"r2, #0"	o	o	o	o	-	IS
+5b4	2000	e3a01000	mov	"r1, #0"	o	o	o	o	-	IS
+5b4	4000	e3a07000	mov	"r7, #0"	o	o	o	o	-	IS
+5b4	200000	e3803000	orr	"r3, r0, #0"	o	o	o	o	-	r3>=
+5b4	1000000	e2a03000	adc	"r3, r0, #0"	o	o	o	o	-	r3>=
+5b4	2000000	e1a03000	mov	"r3, r0"	o	o	o	o	-	r3>=
+5b4	80000000	63a03000	movvs	"r3, #0"	o	o	o	o	-	mov if OVFL = 1; since V = 0 -> Attack Possible
+5b8	0	e50b3008	str	"r3, [fp, #-8]"	-	-	-	-	-	Assigning int i into [fp -8] to [fp -4] (4 bytes of int i); IS -> Attack Possible; [$fp -8] = 0x40817718
+5b8	1	e50b3009	str	"r3, [fp, #-9]"	o	o		o	Initial state	From unused region -> No effect
+5b8	2	e50b300a	str	"r3, [fp, #-0xa]"	o	o		o	Initial state	From unused region -> No effect
+5b8	4	e50b300c	str	"r3, [fp, #-0xc]"	o	o		o	Initial state	From unused region -> No effect
+5b8	8	e50b3000	str	"r3, [fp, #-0]"	o	o		o	Initial state	From unused region -> No effect
+5b8	10	e50b3018	str	"r3, [fp, #-0x18]"	o	o	o	o	-	From unused region -> No effect
+5b8	20	e50b3028	str	"r3, [fp, #-0x28]"	o	o		o	Initial state	From unused region -> No effect
+5b8	40	e50b3048	str	"r3, [fp, #-0x48]"	o	o		o	Initial state	From unused region -> No effect
+5b8	80	e50b3088	str	"r3, [fp, #-0x88]"	o	o		o	Initial state	From unused region -> No effect
+5b8	100	e50b3108	str	"r3, [fp, #-0x108]"	o	o		o	Initial state	From unused region -> No effect
+5b8	200	e50b3208	str	"r3, [fp, #-0x208]"	o	o		o	Initial state	From unused region -> No effect
+5b8	400	e50b3408	str	"r3, [fp, #-0x408]"	o	o		o	Initial state	From unused region -> No effect
+5b8	800	e50b3808	str	"r3, [fp, #-0x808]"	o	o		o	Initial state	From unused region -> No effect
+5b8	1000	e50b2008	str	"r2, [fp, #-8]"	o	o	o	o	-	From r2 = PIN_SIZE = i -> Attack Possible
+5b8	2000	e50b1008	str	"r1, [fp, #-8]"	o	o	o	o	-	From r1 = *g_cardPin -> Attack Possible
+5b8	4000	e50b7008	str	"r7, [fp, #-8]"	o	o		o	Initial state	From r7 = 0x409afe54 -> Attack Possible
+5b8	8000	e50bb008	str	"fp, [fp, #-8]"	o	o	o	o	-	From fp = 0x407ff99c -> Attack Possible
+5b8	20000	e5093008	str	"r3, [sb, #-8]"		o			Write attribute	0x40828cd0 <__pointer_chk_guard>: 0xb357099b; from ro region -> Attack Failed
+5b8	40000	e50f3008	str	"r3, [pc, #-8]"		o			Write attribute	From .text with RX attribute -> Attack Failed
+5b8	100000	e51b3008	ldr	"r3, [fp, #-8]"	o	o		o	Initial state	IS -> Attack Possible
+5b8	400000	e54b3008	strb	"r3, [fp, #-8]"	o	o		o	Initial state	"[$fp - 8] = 0x40817700, so if i > PIN_SIZE -> Attack Possible"
+5b8	800000	e58b3008	str	"r3, [fp, #8]"	o	o		o	Initial state	verifyPin does not use fp -> Attack Possible
+5b8	2000000	e70b3008	str	"r3, [fp, -r8]"	o	o		o	Initial state	r8 = 0x400834; from stack region -> No effect
+5b8	80000000	650b3008	strvs	"r3, [fp, #-8]"	o	o		o	Initial state	"Since V = 0, not executed -> Attack Possible"
+5bc	0	ea00000e	b	#0x1040	-	-	-	-	-	Jump to check of i < PIN_SIZE
+5bc	1	ea00000f	b	#0x1044	o	o	o	o	-	"Since r3 = PIN_SIZE is not executed, r3 = i = 0 -> Attack Possible"
+5bc	2000000	e800000e	stmda	"r0, {r1, r2, r3}"	o	o	o	o	-	"[r0-8] = ? = r1, [r0-4] = n/a or g_countermeasure or g_ptc or g_authenticated = r2 = 4; [r0] = g_userPin = r1 = *g_cardPin = 0x402054; then r0 = r0 - 8"
+5c4	0	e51b2010	ldr	"r2, [fp, #-0x10]"	-	-	-	-	-	Load from *g_userPin
+5c4	4	e51b2014	ldr	"r2, [fp, #-0x14]"	o	o	o	o	-	Load from *g_cardPin -> Attack Possible
+5cc	0	e5d32000	ldrb	"r2, [r3]"	-	-	-	-	-	Load g_userPin[i]
+5cc	4	e5d32004	ldrb	"r2, [r3, #4]"	o	o	o	o	-	g_userPin[i+4] = g_cardPin[i] -> Attack Possible
+5d4	0	e51b1014	ldr	"r1, [fp, #-0x14]"	-	-	-	-	-	Load from *g_cardPin
+5d4	1	e51b1015	ldr	"r1, [fp, #-0x15]"	o	o	o	o	-	"From 0x14: |00|40|20|54|04(PIN_SIZE), r1 = 40205404; this indicates 0 in unused stack data -> Attack Possible"
+5d4	4	e51b1010	ldr	"r1, [fp, #-0x10]"	o	o	o	o	-	Load from *g_userPin -> Attack Possible
+5d8	0	e0813003	add	"r3, r1, r3"	-	-	-	-	-	g_cardPin[i]
+5d8	10000	e0803003	add	"r3, r0, r3"	o	o	o	o	-	From r0 = *g_userPin -> Attack Possible
+5d8	80000	e0893003	add	"r3, sb, r3"	o	o		o	Initial state	From sb = 0x40828cd8 <_rtld_global_ro>: 0x00000000 -> Attack Possible
+5d8	400000	e0c13003	sbc	"r3, r1, r3"	o	o	o	o	-	"r3 = r1 - r3 - 1 = *g_cardPin - i - (1 - C); since C = 0, g_cardPin[-1 to -3] = g_userPin -> Attack Possible"
+5dc	0	e5d33000	ldrb	"r3, [r3]"	-	-	-	-	-	r3 = g_cardPin[i]
+5dc	4	e5d33004	ldrb	"r3, [r3, #4]"	o	o	o	o	-	From unused region -> 0
+5dc	8	e5d33008	ldrb	"r3, [r3, #8]"	o	o	o	o	-	From unused region -> 0
+5dc	10	e5d33010	ldrb	"r3, [r3, #0x10]"	o	o	o	o	-	r3 = g_cardPin[i + 16]
+5dc	20	e5d33020	ldrb	"r3, [r3, #0x20]"	o	o	o	o	-	From unused region -> 0
+5dc	40	e5d33040	ldrb	"r3, [r3, #0x40]"	o	o	o	o	-	From unused region -> 0
+5dc	80	e5d33080	ldrb	"r3, [r3, #0x80]"	o	o	o	o	-	From unused region -> 0
+5dc	100	e5d33100	ldrb	"r3, [r3, #0x100]"	o	o	o	o	-	From unused region -> 0
+5dc	200	e5d33200	ldrb	"r3, [r3, #0x200]"	o	o	o	o	-	From unused region -> 0
+5dc	400	e5d33400	ldrb	"r3, [r3, #0x400]"	o	o	o	o	-	From unused region -> 0
+5dc	800	e5d33800	ldrb	"r3, [r3, #0x800]"	o	o	o	o	-	From unused region -> 0
+5.00E+00	0	e1520003	cmp	"r2, r3"	-	-	-	-	-	a1 vs. a2
+5.00E+00	1	e1520002	cmp	"r2, r2"	o	o	o	o	-	Since Z = 1 -> Attack Possible
+5.00E+00	4	e1520007	cmp	"r2, r7"			o		Initial state	From r7 = 0x409b0e54 -> Attack Failed
+5.00E+00	10	e1520013	cmp	"r2, r3, lsl r0"	o	o	o	o	-	r3 << *g_userPin = 0x0402050 = 0 -> Attack Possible
+5.00E+00	20	e1520023	cmp	"r2, r3, lsr #32"	o	o	o	o	-	g_userPin[i] vs. (g_cardPin[i] << 32 = 0) -> Attack Possible
+5.00E+00	40	e1520043	cmp	"r2, r3, asr #32"	o	o	o	o	-	g_userPin[i] vs. (g_cardPin[i] >> 32 = 0) -> Attack Possible
+5.00E+00	10000	e1530003	cmp	"r3, r3"	o	o	o	o	-	Since Z = 1 -> Attack Possible
+5.00E+00	400000	e1120003	tst	"r2, r3"	o	o	o	o	-	"r2 = 0 AND r3 -> always 0; since Z = 1, N = 0 -> treated as equal -> Attack Possible"
+5.00E+00	800000	e1d20003	bics	"r0, r2, r3"	o	o	o	o	-	r0 = r2 AND (NOT r3); since r2 = 0 -> Z = 1 -> treated as equal -> Attack Possible
+5.00E+04	0	0a000001	beq	#0x100c	-	-	-	-	-	If Z = 1 then continue processing
+5.00E+04	10000000	1a000001	bne	#0x100c	o	o	o	o	-	Continue if Z = 0; but a1 != a2 -> Attack Possible
+5.00E+04	40000000	4a000001	bmi	#0x100c	o	o	o	o	-	Continue if N = 1; since a1 = 0 < a2 -> Attack Possible
+5.00E+08	0	e3a03000	mov	"r3, #0"	-	-	-	-	-	ret 0; originally r3 = 1 -> IS -> Attack Possible; NZCV = 1000
+5.00E+08	1	e3a03001	mov	"r3, #1"	o	o	o	o	-	ret 1 -> Attack Possible
+5.00E+08	1000	e3a02000	mov	"r2, #0"	o	o	o	o	-	From r3 = g_cardPin[0] = 1 -> Attack Possible
+5.00E+08	2000	e3a01000	mov	"r1, #0"	o	o	o	o	-	r3 continues
+5.00E+08	4000	e3a07000	mov	"r7, #0"	o	o	o	o	-	r3 continues
+5.00E+08	20000000	c3a03000	movgt	"r3, #0"	o	o	o	o	-	"If Z = 0 and N = V, not executed -> Attack Possible"
+5.00E+08	40000000	a3a03000	movge	"r3, #0"	o	o	o	o	-	"If N = V, not executed -> Attack Possible"
+5.00E+08	80000000	63a03000	movvs	"r3, #0"	o	o	o	o	-	"If V = 1, not executed -> Attack Possible"
+5ec	0	ea000007	b	#0x1024	-	-	-	-	-	Return logic; if no side effect and continues -> loop runs until i = PIN_SIZE; NZCV = 1000
+5ec	1	ea000006	b	#0x1020	o	o	o	o	-	"Jump to mov r3, #1 -> Attack Possible"
+5ec	4	ea000003	b	#0x1014	o	o	o	o	-	"Jump to IP = 600; since if(i < r3 = 0), no branch, goes to equality success logic"
+5ec	80	ea000087	b	#0x1224		o	o	o	Success condition	Jump to 810; to conditional instruction before super_secret -> Attack Possible
+5ec	2000000	e8000007	stmda	"r0, {r0, r1, r2}"	o	o	o	o	-	r0=*g_userPin; [r0]=r2=0; [r0-4]=g_auth|g_ptc|g_coutner|n/a=0x00402054; [r0-8]=r0; r0=r0-8; no effect
+5ec	8000000	e2000007	and	"r0, r0, #7"	o	o	o	o	-	No effect
+5ec	20000000	ca000007	bgt	#0x1024	o	o	o	o	-	"If Z = 0 and N = V, not executed"
+5ec	40000000	aa000007	bge	#0x1024	o	o	o	o	-	Jump if N = V
+5ec	80000000	6a000007	bvs	#0x1024	o	o	o	o	-	Jump if V = 1; not jumped
+5fc	0	e55b3015	ldrb	"r3, [fp, #-0x15]"	-	-	-	-	-	r3 = PIN_SIZE; before execution r3 = 0 = initial value of i; IS -> Attack Possible
+5fc	2	e55b3017	ldrb	"r3, [fp, #-0x17]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	4	e55b3011	ldrb	"r3, [fp, #-0x11]"	o	o	o	o	-	0x407ff98b: 0x00
+5fc	8	e55b301d	ldrb	"r3, [fp, #-0x1d]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	10	e55b3005	ldrb	"r3, [fp, #-5]"	o	o	o	o	-	[fp-8]--[fp-5] = i; since r3 = 0 -> Attack Possible
+5fc	20	e55b3035	ldrb	"r3, [fp, #-0x35]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	40	e55b3055	ldrb	"r3, [fp, #-0x55]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	80	e55b3095	ldrb	"r3, [fp, #-0x95]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	100	e55b3115	ldrb	"r3, [fp, #-0x115]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	200	e55b3215	ldrb	"r3, [fp, #-0x215]"			o		Initial state	[fp-0x215] = 0x407ff787: 0x36 -> Attack Failed
+5fc	400	e55b3415	ldrb	"r3, [fp, #-0x415]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	800	e55b3815	ldrb	"r3, [fp, #-0x815]"	o	o	o	o	-	From r3 = 0 -> Attack Possible
+5fc	1000	e55b2015	ldrb	"r2, [fp, #-0x15]"	o	o	o	o	-	IS -> Attack Possible
+5fc	2000	e55b1015	ldrb	"r1, [fp, #-0x15]"	o	o	o	o	-	IS -> Attack Possible
+5fc	4000	e55b7015	ldrb	"r7, [fp, #-0x15]"	o	o	o	o	-	IS -> Attack Possible
+5fc	20000	e5593015	ldrb	"r3, [sb, #-0x15]"	o	o		o	Initial state	sb-0x15 = 0x40828cc3: 0x00
+5fc	100000	e54b3015	strb	"r3, [fp, #-0x15]"	o	o	o	o	-	IS -> Attack Possible
+5fc	800000	e5db3015	ldrb	"r3, [fp, #0x15]"			o		Initial state	"[fp, #0x15] = 0xfb -> Attack Failed"
+5fc	80000000	655b3015	ldrbvs	"r3, [fp, #-0x15]"	o	o	o	o	-	"If V = 1 executed; since NZCV = 0010, not executed -> Attack Possible"
+600	0	e51b2008	ldr	"r2, [fp, #-8]"	-	-	-	-	-	"Load i; before execution, r2 = PIN_SIZE -> IS -> Attack Possible"
+600	2	e51b200a	ldr	"r2, [fp, #-0xa]"	o	o		o	Initial state	0x407ff992: 0x00000040
+600	4	e51b200c	ldr	"r2, [fp, #-0xc]"	o	o		o	Initial state	0x407ff990: 0x00400034
+600	8	e51b2000	ldr	"r2, [fp, #-0]"	o	o	o	o	-	0x407ff99c: 0x407ff9ac
+600	10	e51b2018	ldr	"r2, [fp, #-0x18]"	o	o	o	o	-	0x407ff984: 0x04000000; -> Attack Possible
+600	20	e51b2028	ldr	"r2, [fp, #-0x28]"	o	o		o	Initial state	0x407ff974: 0x40828cd8
+600	200	e51b2208	ldr	"r2, [fp, #-0x208]"	o	o		o	Initial state	0x407ff794: 0x4081ae80
+600	1000	e51b3008	ldr	"r3, [fp, #-8]"	o	o	o	o	-	r3 = 0; since r2 = PIN_SIZE -> Attack Possible
+600	2000	e51b0008	ldr	"r0, [fp, #-8]"	o	o	o	o	-	IS -> Attack Possible
+600	4000	e51b6008	ldr	"r6, [fp, #-8]"	o	o	o	o	-	IS -> Attack Possible
+600	8000	e51ba008	ldr	"sl, [fp, #-8]"	o	o	o	o	-	IS -> Attack Possible
+600	20000	e5192008	ldr	"r2, [sb, #-8]"	o	o		o	Initial state	0x40828cd0 <__pointer_chk_guard>: 0xf0f28666
+600	100000	e50b2008	str	"r2, [fp, #-8]"	o	o	o	o	-	"str, so IS -> Attack Possible"
+600	2000000	e71b2008	ldr	"r2, [fp, -r8]"			o		Initial state	"[fp] = 0x407ff9ac, but r8 != 0; 0x403ff168: 0x00000000 -> Attack Failed"
+600	80000000	651b2008	ldrvs	"r2, [fp, #-8]"	o	o	o	o	-	"If V = 1 executed; since NZCV = 0010, not executed -> Attack Possible"
+604	0	e1520003	cmp	"r2, r3"	-	-	-	-	-	i vs. PIN_SIZE; loop continues -> Attack Possible
+604	1	e1520002	cmp	"r2, r2"	o	o	o	o	-	"Since Z = 1, considered equal, loop continues"
+604	4	e1520007	cmp	"r2, r7"			o		Initial state	From r7 = 0x409b0e54 -> Attack Failed
+604	10	e1520013	cmp	"r2, r3, lsl r0"	o	o	o	o	-	"From r3 = 4 << *g_userPin = 0x0402050 = 0, N = 0, so loop exits -> Attack Possible"
+604	20	e1520023	cmp	"r2, r3, lsr #32"	o	o	o	o	-	"r3 >> 32 = 0 = r2, so N = 0, loop exits -> Attack Possible"
+604	40	e1520043	cmp	"r2, r3, asr #32"	o	o	o	o	-	"r3 >> 32 = 0 = r2, so N = 0, loop exits -> Attack Possible"
+604	10000	e1530003	cmp	"r3, r3"	o	o	o	o	-	"Since Z = 1, considered equal, loop continues"
+604	20000	e1500003	cmp	"r0, r3"	o	o	o	o	-	*g_userPin = 0x402050 vs. PIN_SIZE
+604	40000	e1560003	cmp	"r6, r3"	o	o		o	Initial state	r6 0x401ebc
+604	200000	e1720003	cmn	"r2, r3"	o	o	o	o	-	"From r2 + r3, N = 0, so loop exits -> Attack Possible"
+604	400000	e1120003	tst	"r2, r3"	o	o	o	o	-	"From r2 = 0 AND r3, N = 0, so loop exits -> Attack Possible"
+604	800000	e1d20003	bics	"r0, r2, r3"	o	o	o	o	-	"r0 = r2 AND (NOT r3); since r2 = 0, N = 0, so loop exits -> Attack Possible"
+604	80000000	61520003	cmpvs	"r2, r3"	o	o	o	o	-	"If V = 1 executed; since NZCV = 0010, not executed, loop exits"
+608	0	baffffec	blt	#0xfb8	-	-	-	-	-	Jump to a1 vs. a2 loop
+608	8	baffffe4	blt	#0xf98	o	o	o	o	-	"Jump to 5a0; sp is decremented but fp stays; since r2 = i = 0, size = 0, so loop does not run and Attack Possible"
+608	10000000	aaffffec	bge	#0xfb8	o	o	o	o	-	"Since r2 < r3, no jump, Attack Possible"
+638	0	e3a02000	mov	"r2, #0"	-	-	-	-	-	g_authenticated = 0; for 1 or higher -> Attack Possible; NZCV = 0010
+638	1	e3a02001	mov	"r2, #1"	o	o	o	o	-	r2 >= 1
+638	2	e3a02002	mov	"r2, #2"	o	o	o	o	-	r2 >= 1
+638	4	e3a02004	mov	"r2, #4"	o	o	o	o	-	r2 >= 1
+638	8	e3a02008	mov	"r2, #8"	o	o	o	o	-	r2 >= 1
+638	10	e3a02010	mov	"r2, #0x10"	o	o	o	o	-	r2 >= 1
+638	20	e3a02020	mov	"r2, #0x20"	o	o	o	o	-	r2 >= 1
+638	40	e3a02040	mov	"r2, #0x40"	o	o	o	o	-	r2 >= 1
+638	80	e3a02080	mov	"r2, #0x80"	o	o	o	o	-	r2 >= 1
+638	200000	e3802000	orr	"r2, r0, #0"	o	o		o	Initial state	r2 = r0 = 1 >= 1
+638	400000	e3e02000	mvn	"r2, #0"	o	o	o	o	-	r2 = NOT(0) = 0xFFFFFFFF
+638	1000000	e2a02000	adc	"r2, r0, #0"	o	o	o	o	-	"r0 = 1, C = 1 -> r2 = 2 >= 1"
+638	2000000	e1a02000	mov	"r2, r0"	o	o		o	Initial state	r2 = r0 = 1 >= 1
+63c	0	e5c32000	strb	"r2, [r3]"	-	-	-	-	-	g_authenticated = 0
+63c	1000	e5c33000	strb	"r3, [r3]"	o	o	o	o	-	r3 = *g_authenticated >= 1 -> Attack Possible
+63c	2000	e5c30000	strb	"r0, [r3]"	o	o		o	Initial state	r0 = 1
+63c	4000	e5c36000	strb	"r6, [r3]"	o	o		o	Initial state	r6 = 0x401ebc
+654	0	e3a02004	mov	"r2, #4"	-	-	-	-	-	r2 = PIN_SIZE; originally r2 = 0 -> IS -> Attack Possible
+654	4	e3a02000	mov	"r2, #0"	o	o	o	o	-	PIN_SIZE = 0 -> Attack Possible
+654	200	e3a02204	mov	"r2, #4, #4"	o	o	o	o	-	"mov r2, #4, rotate #4 -> r2 = 0x40000000; used in strb -> size = 0 -> Attack Possible"
+654	400	e3a02404	mov	"r2, #4, #8"	o	o	o	o	-	"mov r2, #4, rotate #8 -> r2 = 0x04000000; used in strb -> size = 0 -> Attack Possible"
+654	800	e3a02804	mov	"r2, #4, #16"	o	o	o	o	-	"mov r2, #4, rotate #16 -> r2 = 0x00040000; used in strb -> size = 0 -> Attack Possible"
+654	1000	e3a03004	mov	"r3, #4"	o	o	o	o	-	IS -> Attack Possible
+654	2000	e3a00004	mov	"r0, #4"	o	o	o	o	-	IS -> Attack Possible
+654	4000	e3a06004	mov	"r6, #4"	o	o	o	o	-	IS -> Attack Possible
+654	8000	e3a0a004	mov	"sl, #4"	o	o	o	o	-	IS -> Attack Possible
+654	4000000	e7a02004	str	"r2, [r0, r4]!"		o	o		Write attribute	"r0 = r0 + r4 then r2 -> [r0]; r0 = 1, r4 = 0x401fb8, [0x401fb9]; since .text lacks X attribute -> Attack Failed"
+654	10000000	f3a02004	vaddl.u32	"q1, d0, d4"	o			o	Unimplemented instruction	"SIMD instruction; q1, d0, d4 are SIMD registers -> IS -> Attack Possible (unicorn does not support SIMD/NEON)"
+654	80000000	63a02004	movvs	"r2, #4"	o	o	o	o	-	If V = 1 executed; since NZCV = 0010 -> IS -> Attack Possible
+658	0	e59f3090	ldr	"r3, [pc, #0x90]"	-	-	-	-	-	Offset to g_cardPin (added to base address)
+658	4	e59f3094	ldr	"r3, [pc, #0x94]"	o	o	o	o	-	Offset to g_userPin -> Attack Possible
+65c	0	e7943003	ldr	"r3, [r4, r3]"	-	-	-	-	-	"r3 = *g_cardPin = 0x401ff8, [0x401ff8] = 0x00402054"
+65c	4000000	e3943003	orrs	"r3, r4, #3"	o	o	o	o	-	"r4 = 0x401fb8 -> r3 = 0x401fbb, [0x401fbb] = 0 -> Attack Possible"
+660	0	e1a01003	mov	"r1, r3"	-	-	-	-	-	r1 = r3 = *g_cardPin
+660	400	e1a01403	lsl	"r1, r3, #8"	o	o	o	o	-	"r1 = r3 (0x402054) << 8 = 0x40205400, [0x40205400] = 0 -> Attack Possible"
+66c	0	e1a00003	mov	"r0, r3"	-	-	-	-	-	r0 = *g_userPin
+66c	2	e1a00001	mov	"r0, r1"	o	o	o	o	-	r1 = *g_cardPin -> Attack Possible
+678	0	e3530001	cmp	"r3, #1"	-	-	-	-	-	Check for byteArrayCompare == 1
+678	1	e3530000	cmp	"r3, #0"	o	o	o	o	-	Branch -> Attack Possible
+678	400000	e3130001	tst	"r3, #1"	o	o	o	o	-	r3 = 0 AND 1 = 0; since Z = 1 -> Attack Possible
+678	800000	e3d30001	bics	"r0, r3, #1"	o	o	o	o	-	r0 = r3 AND (NOT 1); since r3 = 0 -> Z = 1 -> Attack Possible
+67c	0	1a000009	bne	#0x102c	-	-	-	-	-	move to exit with 0
+67c	8000000	12000009	andne	"r0, r0, #9"	o	o	o	o	-	If Z = 0 then executed; same as IS -> Attack Possible
+67c	10000000	0a000009	beq	#0x102c	o	o	o	o	-	If Z = 0 -> no jump -> Attack Possible
+67c	40000000	5a000009	bpl	#0x102c	o	o	o	o	-	"Jump if N = 0; since 0 - 1 makes N = 1, no jump -> Attack Possible"
+75c	0	e59f30ac	ldr	"r3, [pc, #0xac]"	-	-	-	-	-	Offset to *g_countermeasure in r3
+75c	200000	e5bf30ac	ldr	"r3, [pc, #0xac]!"		o	o	o	Success condition	r3 = [pc + 8 + 0xac]; pc + 8 + 0xac = 0x400810 -> super_secret
+75c	1000000	e49f30ac	ldr	"r3, [pc], #0xac"		o	o	o	Success condition	r3 = [pc + 8] = 0xe3a02000; pc + 8 + 0xac = 0x400810 -> super_secret
+76c	0	e3a03000	mov	"r3, #0"	-	-	-	-	-	Loop counter i for g_cardPin initialization; if i > 3 or IS -> Attack Possible
+76c	4	e3a03004	mov	"r3, #4"	o	o	o	o	-	i > 3 -> Attack Possible
+76c	8	e3a03008	mov	"r3, #8"	o	o	o	o	-	i > 3 -> Attack Possible
+76c	10	e3a03010	mov	"r3, #0x10"	o	o	o	o	-	i > 3 -> Attack Possible
+76c	20	e3a03020	mov	"r3, #0x20"	o	o	o	o	-	i > 3 -> Attack Possible
+76c	40	e3a03040	mov	"r3, #0x40"	o	o	o	o	-	i > 3 -> Attack Possible
+76c	80	e3a03080	mov	"r3, #0x80"	o	o	o	o	-	i > 3 -> Attack Possible
+76c	1000	e3a02000	mov	"r2, #0"	o	o	o	o	-	IS -> Attack Possible
+76c	2000	e3a01000	mov	"r1, #0"	o	o	o	o	-	IS -> Attack Possible
+76c	4000	e3a07000	mov	"r7, #0"	o	o	o	o	-	IS -> Attack Possible
+76c	20000000	c3a03000	movgt	"r3, #0"	o	o	o	o	-	IS -> Attack Possible
+76c	80000000	63a03000	movvs	"r3, #0"	o	o	o	o	-	IS -> Attack Possible
+770	0	e50b3008	str	"r3, [fp, #-8]"	-	-	-	-	-	Storing loop counter i to stack; since initial value is 0x407ffc80 -> IS -> Attack Possible
+770	1	e50b3009	str	"r3, [fp, #-9]"	o	o		o	Initial state	From fp - 8: 0x40 7f fc 80 00 -> fp - 8 becomes 0x40000000 -> Attack Possible
+770	2	e50b300a	str	"r3, [fp, #-0xa]"	o	o		o	Initial state	
+770	4	e50b300c	str	"r3, [fp, #-0xc]"	o	o		o	Initial state	
+770	8	e50b3000	str	"r3, [fp, #-0]"	o	o		o	Initial state	
+770	10	e50b3018	str	"r3, [fp, #-0x18]"	o	o		o	Initial state	
+770	20	e50b3028	str	"r3, [fp, #-0x28]"	o	o		o	Initial state	
+770	40	e50b3048	str	"r3, [fp, #-0x48]"	o	o		o	Initial state	
+770	80	e50b3088	str	"r3, [fp, #-0x88]"	o	o		o	Initial state	
+770	100	e50b3108	str	"r3, [fp, #-0x108]"	o	o		o	Initial state	
+770	200	e50b3208	str	"r3, [fp, #-0x208]"	o	o		o	Initial state	
+770	400	e50b3408	str	"r3, [fp, #-0x408]"	o	o		o	Initial state	
+770	800	e50b3808	str	"r3, [fp, #-0x808]"	o	o		o	Initial state	
+770	2000	e50b1008	str	"r1, [fp, #-8]"	o	o		o	Initial state	"At main execution, r1 = 0x407ffc14 -> Attack Possible"
+770	4000	e50b7008	str	"r7, [fp, #-8]"	o	o		o	Initial state	From r7 = 0x409afe54 -> Attack Possible
+770	8000	e50bb008	str	"fp, [fp, #-8]"	o	o	o	o	-	
+770	20000	e5093008	str	"r3, [sb, #-8]"		o			Write attribute	0x40828cd0 <__pointer_chk_guard>: 0xb357099b; from ro region -> Attack Failed
+770	40000	e50f3008	str	"r3, [pc, #-8]"		o			Write attribute	Cannot write to .text -> Attack Failed
+770	100000	e51b3008	ldr	"r3, [fp, #-8]"	o	o		o	Initial state	
+770	200000	e52b3008	str	"r3, [fp, #-8]!"		o		o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	"After reaching segfault, chaos duck does not log output; due to fp - 8, g_authenticated = 1"
+770	400000	e54b3008	strb	"r3, [fp, #-8]"	o	o		o	Initial state	From 0x407ffc00 -> Attack Possible
+770	800000	e58b3008	str	"r3, [fp, #8]"	o	o		o	Initial state	
+770	1000000	e40b3008	str	"r3, [fp], #-8"		o		o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	"After reaching segfault, chaos duck does not log output; due to fp - 8, g_authenticated = 1"
+770	2000000	e70b3008	str	"r3, [fp, -r8]"	o	o		o	Initial state	"fp = 0x407ff97c, r8 = 0x400834 -> 0x403ff148: 0x00000000; accessible"
+770	20000000	c50b3008	strgt	"r3, [fp, #-8]"	o	o		o	Initial state	NZCV = 0110; Z = 0 and N = V not satisfied -> not executed
+770	80000000	650b3008	strvs	"r3, [fp, #-8]"	o	o		o	Initial state	Since V = 0 -> not executed -> Attack Possible
+774	0	ea00000c	b	#0x1038	-	-	-	-	-	Jump to if (i < PIN_SIZE)
+774	10	ea00001c	b	#0x1078	o	o	o	o	-	Jump to 7ec; jump to g_userPin loop counter check -> Attack Possible
+774	20	ea00002c	b	#0x10b8		o	o	o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	Jump to 82c; segfault occurs after 1st super_secret; 824 reached in 2nd round
+778	0	e51b3008	ldr	"r3, [fp, #-8]"	-	-	-	-	-	Load i for g_userPin = i + 1
+778	200000	e53b3008	ldr	"r3, [fp, #-8]!"		o		o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	fp = fp - 8 then [fp] = r3; fp change -> Attack Possible; final segfault
+778	1000000	e41b3008	ldr	"r3, [fp], #-8"		o		o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	r3 = [fp] = 0x407ff9bc: 0x40854628; then fp = fp - 8; fp change -> Attack Possible; final segfault
+77c	0	e6ef3073	uxtb	"r3, r3"	-	-	-	-	-	Zero extension of i; r3 & 0x000000FF
+77c	2000000	e4ef3073	strbt	"r3, [pc], #0x73"		o	o		Write attribute	8bit str then pc = pc + 8 + 0x73; write to .text is prohibited -> Attack Failed
+784	0	e6ef1073	uxtb	"r1, r3"	-	-	-	-	-	r1 = (r3: i + 1) & 0x000000FF
+784	1	e6ef1072	uxtb	"r1, r2"	o	o	o	o	-	"Initially r2 = 0 from g_countermeasure; later changed, but mov r1, r2 sets it back to 0 -> Attack Possible"
+784	2	e6ef1071	uxtb	"r1, r1"			o		Initial state	From r1 = 0x407ffb34 -> Attack Failed
+784	4	e6ef1077	uxtb	"r1, r7"			o		Initial state	From r7 = 0x409b0e54 -> Attack Failed
+784	20	e6ef1053	usat	"r1, #0xf, r3, asr #0x20"	o	o	o	o	-	Unsigned SATurate: r3 >> 0x20 = 0xFF..FF or 0x00..00; & 2^15-1 -> 0 if r3 > 0 else 32767; since r3 > 0 -> 0 -> Attack Possible
+784	400	e6ef1473	uxtb	"r1, r3, ror #8"	o	o	o	o	-	r3 = 0x0000000104 -> ror -> 0104 00_0000 & 0xFF -> 0 -> Attack Possible
+784	800	e6ef1873	uxtb	"r1, r3, ror #16"	o	o	o	o	-	r3 = 0x0000000104 -> ror -> 00_0104_0000 & 0xFF -> 0 -> Attack Possible
+784	1000	e6ef0073	uxtb	"r0, r3"			o		Initial state	From r1 = 0x407ffb34 -> Attack not possible under IS
+784	2000	e6ef3073	uxtb	"r3, r3"			o		Initial state	From r1 = 0x407ffb34 -> Attack not possible under IS
+784	4000	e6ef5073	uxtb	"r5, r3"			o		Initial state	From r1 = 0x407ffb34 -> Attack not possible under IS
+784	8000	e6ef9073	uxtb	"sb, r3"			o		Initial state	From r1 = 0x407ffb34 -> Attack not possible under IS
+784	2000000	e4ef1073	strbt	"r1, [pc], #0x73"		o	o		Write attribute	Write to .text is prohibited
+784	20000000	c6ef1073	uxtbgt	"r1, r3"			o		Initial state	From r1 = 0x407ffb34 -> Attack not possible under IS
+784	80000000	66ef1073	uxtbvs	"r1, r3"			o		Initial state	From r1 = 0x407ffb34 -> Attack not possible under IS
+788	0	e59f2084	ldr	"r2, [pc, #0x84]"	-	-	-	-	-	Offset to g_cardPin
+788	4	e59f2080	ldr	"r2, [pc, #0x80]"	o	o	o	o	-	r2 = 0x18e6; final r2 = 0x40207a: 0x00000000 -> Attack Possible
+788	200000	e5bf2084	ldr	"r2, [pc, #0x84]!"		o	o	o	Success condition	Writing back to pc; pc = pc + 8 + 0x84 = 0x400814 -> super_secret reached
+788	400000	e5df2084	ldrb	"r2, [pc, #0x84]"		o	o		Write attribute	"From 0x400814, r2 = 0x14; final r2 = 0x400854; this is not writable"
+788	1000000	e49f2084	ldr	"r2, [pc], #0x84"		o	o	o	Success condition	Writing back to pc; pc = pc + 8 + 0x84 = 0x400814 -> super_secret reached
+78c	0	e08f2002	add	"r2, pc, r2"	-	-	-	-	-	Base address addition for PIE support; r2 = 0x402054
+78c	10000	e08e2002	add	"r2, lr, r2"	o	o	o	o	-	r2 = lr + r2 = 0x402108; [0x402108] = 0
+78c	20000	e08d2002	add	"r2, sp, r2"		o			Write attribute	0x40801260: 0xcbff3bcd; no write permission
+78c	40000	e08b2002	add	"r2, fp, r2"		o			Write attribute	0x4080126c: 0x85bdb5ee; no write permission
+78c	80000	e0872002	add	"r2, r7, r2"	o	o		o	Initial state	r2 = 0x409b1714 <__pthread_keys+412>: 0x00000000; writable
+78c	1000000	e18f2002	orr	"r2, pc, r2"		o	o		Write attribute	"r2 = (pc + 8) | 0x18e6 = 0x401fd4, 0x40853e68 : 0xe92d4080; not writable"
+794	0	e0823003	add	"r3, r2, r3"	-	-	-	-	-	g_cardPin + i
+794	40000	e0863003	add	"r3, r6, r3"		o			Write attribute	r6 + i = 0x401ebc + i; not writable
+794	400000	e0c23003	sbc	"r3, r2, r3"	o	o	o	o	-	g_cardPin - i - (1 - C); since NZCV = 1000 -> g_cardPin[-(i+1)] = g_userPin[3-i]; g_userPin overwritten later -> Attack Possible
+798	0	e1a02001	mov	"r2, r1"	-	-	-	-	-	r2 = i + 1
+798	1	e1a02000	mov	"r2, r0"			o		Initial state	r0 = 1 -> Attack Failed
+798	4	e1a02005	mov	"r2, r5"			o		Initial state	r5 = 1 -> Attack Failed
+798	8	e1a02009	mov	"r2, sb"			o		Initial state	sb = 0x40828cd8 -> Attack Failed
+798	20	e1a02021	lsr	"r2, r1, #0x20"	o	o	o	o	-	r2 = I >> 0x20 = 0 = g_userPin[i] -> Attack Possible
+798	40	e1a02041	asr	"r2, r1, #0x20"	o	o	o	o	-	r2 = I >> 0x20 = 0 = g_userPin[i] -> Attack Possible
+798	400	e1a02401	lsl	"r2, r1, #8"	o	o	o	o	-	r2 = I >> 0x8 = 0 = g_userPin[i] -> Attack Possible
+798	800	e1a02801	lsl	"r2, r1, #0x10"	o	o	o	o	-	r2 = I >> 0x10 = 0 = g_userPin[i] -> Attack Possible
+79c	0	e5c32000	strb	"r2, [r3]"	-	-	-	-	-	g_cardPin[i] = i + 1; under IS -> Attack Possible (if zero-initialized and Permanent)
+79c	4	e5c32004	strb	"r2, [r3, #4]"	o	o	o	o	-	
+79c	8	e5c32008	strb	"r2, [r3, #8]"	o	o	o	o	-	
+79c	10	e5c32010	strb	"r2, [r3, #0x10]"	o	o	o	o	-	Unused region
+79c	20	e5c32020	strb	"r2, [r3, #0x20]"	o	o	o	o	-	
+79c	40	e5c32040	strb	"r2, [r3, #0x40]"	o	o	o	o	-	
+79c	80	e5c32080	strb	"r2, [r3, #0x80]"	o	o	o	o	-	
+79c	100	e5c32100	strb	"r2, [r3, #0x100]"	o	o	o	o	-	
+79c	200	e5c32200	strb	"r2, [r3, #0x200]"	o	o	o	o	-	
+79c	400	e5c32400	strb	"r2, [r3, #0x400]"	o	o	o	o	-	
+79c	800	e5c32800	strb	"r2, [r3, #0x800]"	o	o	o	o	-	
+79c	2000	e5c30000	strb	"r0, [r3]"			o		Initial state	From r0 = 0 -> Attack Failed
+79c	4000	e5c36000	strb	"r6, [r3]"			o		Initial state	From r6 = 0x401ebc -> Attack Failed
+79c	8000	e5c3a000	strb	"sl, [r3]"	o	o	o	o	-	From sl = 0 -> Attack Possible
+79c	40000	e5c72000	strb	"r2, [r7]"		o			Write attribute	r7 = 0x409afe54; no write permission
+79c	80000	e5cb2000	strb	"r2, [fp]"	o	o	o	o	-	"fp = 0x407ff9bc; although push{fp} is overwritten, it's recalculated from sp in verifyPIN -> no problem; not used in main -> no problem"
+79c	100000	e5d32000	ldrb	"r2, [r3]"	o	o	o	o	-	If zero-initialized -> Attack Possible
+79c	4000000	e1c32000	bic	"r2, r3, r0"	o	o	o	o	-	"r2 = r3 AND (NOT r0); same as IS, if zero-initialized -> Attack Possible"
+79c	20000000	c5c32000	strbgt	"r2, [r3]"	o	o	o	o	-	"At execution, Z = 0 and N = V not satisfied -> not executed; if zero-initialized -> Attack Possible"
+79c	80000000	65c32000	strbvs	"r2, [r3]"	o	o	o	o	-	"V != 1, so same as IS"
+7ac	0	e51b3008	ldr	"r3, [fp, #-8]"	-	-	-	-	-	Load loop counter i; if I > PIN_SIZE -> Attack Possible
+7ac	8	e51b3000	ldr	"r3, [fp, #-0]"	o	o	o	o	-	0x407ff9ac: 0x407ff9bc
+7ac	10	e51b3018	ldr	"r3, [fp, #-0x18]"	o	o		o	Initial state	0x407ff994: 0x40817718
+7ac	20000	e5193008	ldr	"r3, [sb, #-8]"	o	o		o	Initial state	"0x40828cd0 <__pointer_chk_guard>: 0xfd47fb0b < 0 -> loop not entered, g_cardPin stays in initial state"
+7ac	200000	e53b3008	ldr	"r3, [fp, #-8]!"		o		o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	fp change -> Attack Possible; final segfault (not detected by chaosduck)
+7ac	1000000	e41b3008	ldr	"r3, [fp], #-8"		o	o	o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	fp change -> Attack Possible; final segfault (not detected by chaosduck)
+7ac	2000000	e71b3008	ldr	"r3, [fp, -r8]"			o		Initial state	
+7b0	0	e3530003	cmp	"r3, #3"	-	-	-	-	-	I < PIN_SIZE
+7b0	100	e3530103	cmp	"r3, #0xc0000000"	o	o	o	o	-	"0xc0... < 0, so i is larger"
+7b0	20000	e3510003	cmp	"r1, #3"	o	o		o	Initial state	"At main execution, r1 = 0x407ffc14 -> Attack Possible"
+7b0	40000	e3570003	cmp	"r7, #3"	o	o		o	Initial state	From r7 = 0x409afe54 -> Attack Possible
+7b0	80000	e35b0003	cmp	"fp, #3"	o	o	o	o	-	From fp = 0x407ff9ac -> Attack Possible
+7b0	200000	e3730003	cmn	"r3, #3"	o	o	o	o	-	"From r3 + 3, since Z = 0 and N = 0 -> Attack Possible"
+7b4	0	daffffef	ble	#0xfc4	-	-	-	-	-	Jump to g_cardPin initialization
+7b4	10	daffffff	ble	#0x1004	o	o	o	o	-	7b8: instruction skip -> Attack Possible
+7b4	20	daffffcf	ble	#0xf44		o	o	o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	"0x6f8: enters countermeasure+0; skipped -> Attack Possible, but ends in segfault"
+7b4	100	dafffeef	ble	#0xbc4		o	o	o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	"0x378: dynamic linker loaded, _init() can be run; skipping g_cardPin init -> authenticated = 1; then segfault"
+7b4	10000000	caffffef	bgt	#0xfc4	o	o	o	o	-	Condition not met -> g_cardPin remains in initial state
+7b4	80000000	5affffef	bpl	#0xfc4	o	o	o	o	-	"Since N = 1, condition not met -> g_cardPin remains in initial state"
+7c0	0	ea000008	b	#0x1028	-	-	-	-	-	
+7c0	10	ea000018	b	#0x1068		o	o	o	Success condition	Jump to 0x820; inside super_secret_function
+7c4	0	e59f204c	ldr	"r2, [pc, #0x4c]"	-	-	-	-	-	Offset of g_userPin
+7c4	200000	e5bf204c	ldr	"r2, [pc, #0x4c]!"		o	o	o	Success condition	pc = 0x818; direct entry into super_secret_function
+7c4	1000000	e49f204c	ldr	"r2, [pc], #0x4c"		o	o	o	Success condition	pc = 0x818; direct entry into super_secret_function
+7d8	0	e5c32000	strb	"r2, [r3]"	-	-	-	-	-	g_userPin[i] = 0
+7d8	4	e5c32004	strb	"r2, [r3, #4]"	o	o	o	o	-	g_userPin[i+4] = g_cardPin[i] -> Attack Possible
+7.00E+08	0	e51b3008	ldr	"r3, [fp, #-8]"	-	-	-	-	-	Update of loop counter i
+7.00E+08	4	e51b300c	ldr	"r3, [fp, #-0xc]"		o	o	o	Revert	"Load source != store destination for loop counter; if loop runs past PIN_SIZE, write to g_cardPin occurs; revert normalizes and exits loop"
+7.00E+08	10	e51b3018	ldr	"r3, [fp, #-0x18]"			o		Initial state	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	20	e51b3028	ldr	"r3, [fp, #-0x28]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	40	e51b3048	ldr	"r3, [fp, #-0x48]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	80	e51b3088	ldr	"r3, [fp, #-0x88]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	100	e51b3108	ldr	"r3, [fp, #-0x108]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	200	e51b3208	ldr	"r3, [fp, #-0x208]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	400	e51b3408	ldr	"r3, [fp, #-0x408]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	800	e51b3808	ldr	"r3, [fp, #-0x808]"		o	o	o	Revert	"[fp, #-0x18] = 0x40817718 -> Attack Failed"
+7.00E+08	40000	e51f3008	ldr	"r3, [pc, #-8]"		o	o	o	Revert	
+7.00E+08	800000	e59b3008	ldr	"r3, [fp, #8]"		o	o	o	Revert	"[fp+8] = 1, but this value is not updated"
+7.00E+08	2000000	e71b3008	ldr	"r3, [fp, -r8]"		o		o	"{FaultFinder: Initial state, Chaos Duck: Revert}"	"[0x407ff9ac - 0x400834] = 0x403ff178: 0x00000000 -> Attack Possible; however, if r8 is considered 0, then [0x407ff9ac] = 0x407ff9bc -> Attack Failed"
+7ec	0	e3530003	cmp	"r3, #3"	-	-	-	-	-	"I < PIN_SIZE; g_userPin[i+4] = g_cardPin[i] -> Attack Possible if loop runs more than 8 times; loop continues if LE {Z = 1 or N != V} holds; pre-exec NZCV = 0010 (not LE), post-exec = 1000 (LE), just before exit = 0110 (LE)"
+7ec	4	e3530007	cmp	"r3, #7"	o	o	o	o	-	
+7ec	8	e353000b	cmp	"r3, #0xb"	o	o	o	o	-	
+7ec	10	e3530013	cmp	"r3, #0x13"	o	o	o	o	-	
+7ec	20	e3530023	cmp	"r3, #0x23"	o	o	o	o	-	
+7ec	40	e3530043	cmp	"r3, #0x43"	o	o	o	o	-	
+7ec	80	e3530083	cmp	"r3, #0x83"	o	o	o	o	-	
+7ec	200	e3530203	cmp	"r3, #0x30000000"		o	o	o	Revert	No timeout since revert occurs after fixed iterations
+7ec	400	e3530403	cmp	"r3, #0x3000000"		o	o	o	Revert	No timeout since revert occurs after fixed iterations
+7ec	800	e3530803	cmp	"r3, #0x30000"		o	o	o	Revert	No timeout since revert occurs after fixed iterations
+7ec	10000	e3520003	cmp	"r2, #3"		o	o	o	Revert	First iteration: r2 = i + 1 = 4; second: r2 = i = 0; loop continues -> Attack Possible by reaching g_cardPin region
+7ec	40000	e3570003	cmp	"r7, #3"			o		Initial state	From r7 = 0x409b0e54 -> Attack Failed
+7ec	100000	e3430003	movt	"r0, #0x3003"		o	o	o	Revert	"r0[31:16] = 0x3003; flag maintained, cmp skipped after 2nd iteration -> loop continues"
+7ec	2000000	e1530003	cmp	"r3, r3"		o	o	o	Revert	Always Z = 1
+7ec	20000000	c3530003	cmpgt	"r3, #3"		o	o	o	Revert	"Post-loop NZCV = 0110; GT {(Z == 0) && (N == V)} not satisfied -> not executed, flag maintained; LE {Z == 1} holds -> loop continues"
+7ec	40000000	a3530003	cmpge	"r3, #3"		o	o	o	Revert	"From 2nd iteration, instruction replaced; NZCV = 1000 -> GE (N = V) not satisfied -> not executed, flag maintained; LE holds -> loop continues -> Attack Possible"
+7ec	80000000	63530003	cmpvs	"r3, #3"		o	o	o	Revert	"From 2nd iteration or after loop, instruction replaced; NZCV = 1000 or 0110 -> VS {V == 1} not satisfied -> not executed, flag maintained; LE holds -> loop continues"
+7f0	0	dafffff3	ble	#0xfd4	-	-	-	-	-	Jump to g_userPin init loop; jump if N = 1 or Z = 1
+7f0	10000000	cafffff3	bgt	#0xfd4		o	o	o	Timing	If Z = 0 and N = V -> executed; fault after loop -> Attack Possible
+7f0	80000000	5afffff3	bpl	#0xfd4		o	o	o	Timing	If N = 0 -> executed; fault after loop -> Attack Possible
+800	0	e49db004	pop	{fp}	-	-	-	-	-	
+800	20000	e49fb004	ldr	"fp, [pc], #4"		o	o	o	Success condition	pc = pc + 8 + 4 = 0x80c; direct entry into super_secret_function
+804	0	e12fff1e	bx	lr	-	-	-	-	-	"Under IS, directly enters secret -> Attack Possible"
+804	1	e12fff1f	bx	pc		o	o	o	Success condition	Effectively a NOP
+804	2000000	e32fff1e	msr	"cpsr_fsxc, #30, #30"		o	o	o	Success condition	cpsr = 0x20000010 -> becomes 0x10
+804	80000000	612fff1e	bxvs	lr		o	o	o	Success condition	"V != 1, so skipped"
+814	0	000018c0	andeq	"r1, r0, r0, asr #17"	-	-	-	-	-	This region contains address data and is not executed -> Attack Failed
+814	4	000018c4	andeq	"r1, r0, r4, asr #17"	o				Not inst	
+814	8	000018c8	andeq	"r1, r0, r8, asr #17"	o				Not inst	
+814	10	000018d0	ldrdeq	"r1, r2, [r0], -r0"	o				Not inst	
+814	20	1.80E+01	andeq	"r1, r0, r0, ror #17"	o				Not inst	
+814	40	1880	andeq	"r1, r0, r0, lsl #17"	o				Not inst	
+814	100	000019c0	andeq	"r1, r0, r0, asr #19"	o				Not inst	
+814	200	00001ac0	andeq	"r1, r0, r0, asr #21"	o				Not inst	
+814	400	00001cc0	andeq	"r1, r0, r0, asr #25"	o				Not inst	
+814	40000000	400018c0	andmi	"r1, r0, r0, asr #17"	o				Not inst	
+818	0	1880	cannot	disas	-	-	-	-	-	This region contains address data and is not executed -> Attack Failed
+818	4	1884	andeq	"r1, r0, r4, lsl #17"	o				Not inst	
+848	0	ebffff74	bl	#0xdd8	-	-	-	-	-	
+848	80	ebfffff4	bl	#0xfd8		o	o	o	Success condition	Jump to 0x820; inside super_secret_function; ends after a few iterations due to revert

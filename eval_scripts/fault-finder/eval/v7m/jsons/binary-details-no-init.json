@@ -1,0 +1,65 @@
+{
+    "binary filename" : "eval/bins/verifypin_0_arm_v7m.bin",
+    "cpu"             : "MAX",
+    "unicorn arch"    : "arm",
+    "unicorn mode"    : "THUMB",
+    "capstone arch"   : "arm",
+    "capstone mode"   : "THUMB",
+    "memory address"  : "0x08000000",
+    "memory size"     : "0x00010000",
+    "other memory"    :
+    [
+    ],
+    "stack address" : "0x20000000",
+    "stack size"    :     "0x2000",
+    "code offset"   : "0x00000000",
+    "code start"    : "0x000001a9",
+    "code end"      : "0x000001b2",
+    "fault start"   : "0x000001a8",
+    "fault end"     : "0x00000190",
+    "hard stops"    :
+    [
+        {
+            "location": "fixed address",
+            "address" : "0x0800017c"
+        }
+    ],
+    "set memory"    : [],
+    "set registers" :
+    [
+    ],
+    "outputs"       : 
+    [
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "pc",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "sp",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "r7",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "fixed address",
+            "address"       : "0x20001fc7",
+            "register"      : "",
+            "length"        : "4",
+            "offset"        : ""
+        }
+    ],
+    "skips": [],
+    "timeout":"0",
+    "filter results": "no"
+}

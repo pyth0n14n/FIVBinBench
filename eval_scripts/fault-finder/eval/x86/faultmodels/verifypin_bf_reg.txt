@@ -1,0 +1,6 @@
+Instructions: 1-137
+    Registers: AL, AX, BP, CL, CX, DI, DL, DX, EAX, ECX, EDX, IP, RAX, RBP, RCX, RDI, RDX, RIP, RSI, RSP, SI, SP
+        Op_codes: ALL
+            Lifespan: 0
+                Operations: xOR
+                    Masks:1<0<64

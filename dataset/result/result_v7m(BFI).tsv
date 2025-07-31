@@ -1,0 +1,303 @@
+IP	mask	code	opcode	oprand	ARCHIE	ARMORY	FaultFinder (rehosting)	FaultFinder	Grand Truth	Type	Reason
+8000046	0	60f8	str	"r0, [r7, #0xc]"	-	-	-	-	-	-	Stack Argument r0 (g_userPin) for byteArrayCompare
+8000046	1	60f9	str	"r1, [r7, #0xc]"	o	o	o	o	o	-	"Since r1 = g_cardPin, a1 = a2, Attack Possible"
+8000048	0	60b9	str	"r1, [r7, #8]"	-	-	-	-	-	-	Stack Argument r1 (g_cardPin) for byteArrayCompare
+8000048	1	60b8	str	"r0, [r7, #8]"	o	o	o	o	o	-	"Since r0 = g_userPin, a1 = a2, Attack Possible"
+800004a	0	4613	mov	"r3, r2"	-	-	-	-	-	-	Move of PIN_SIZE (r2)
+800004a	20	4633	mov	"r3, r6"	o	o	o	o	o	-	Attack Possible if r6 = 0; depends on the value of r6
+800004a	40	4653	mov	"r3, sl"	o	o	o	o	o	-	Attack Possible if sl = 0; depends on the value of sl (SL: stack limit pointer)
+800004a	4000	613	lsls	"r3, r2, #0x18"	o	o	o	o	o	-	"LSLS (Logical Shift Left, setting flags); since r2 = PIN_SIZE = 4, r3 = 0x4000000; loop counter is loaded with ldrb (1 byte), so only 0x00 is visible, Attack Possible"
+800004c	0	71fb	strb	"r3, [r7, #7]"	-	-	-	-	-	-	Store of PIN_SIZE (r3) to Stack
+800004c	8	71f3	strb	"r3, [r6, #7]"	o		o			Write attribute	"Change of Stack Store destination; depends on the value of r6, but operates normally; if [r7, #7] = 0, Attack Possible; since r6 = 0, cannot write, Attack Not Possible"
+800004c	10	71eb	strb	"r3, [r5, #7]"	o		o			Write attribute	"Change of Stack Store destination; depends on the value of r5, but operates normally; if [r5, #7] = 0, Attack Possible; since r5 = 0, cannot write, Attack Not Possible"
+800004c	20	71db	strb	"r3, [r3, #7]"	o		o			Write attribute	"Change of Stack Store destination; depends on the value of r3, but operates normally; if [r7, #7] = 0, Attack Possible; since r3 = g_ptc = 3, cannot write, Attack Not Possible"
+800004c	40	71bb	strb	"r3, [r7, #6]"	o	o	o	o	o	-	"Change of Stack Store destination; operates normally; if [r7, #7] = 0, Attack Possible"
+800004c	80	717b	strb	"r3, [r7, #5]"	o	o	o	o	o	-	"Change of Stack Store destination; operates normally; since [r7, #7] = 0, Attack Possible"
+800004c	100	70fb	strb	"r3, [r7, #3]"	o	o	o	o	o	-	"Change of Stack Store destination; operates normally; if [r7, #7] = 0, Attack Possible"
+800004c	200	73fb	strb	"r3, [r7, #0xf]"	o	o	o	o	o	-	"Change of Stack Store destination; operates normally; if [r7, #7] = 0, Attack Possible"
+800004c	400	75fb	strb	"r3, [r7, #0x17]"	o	o	o	o	o	-	"Change of Stack Store destination; operates normally; if [r7, #7] = 0, Attack Possible"
+800004c	800	79fb	ldrb	"r3, [r7, #7]"	o	o	o	o	o	-	"LDRB (Load Register Byte): loads 1 byte, zero-extended; not actually stored, effectively NOP"
+800004c	1000	61fb	str	"r3, [r7, #0x1c]"	o	o	o	o	o	-	"Change of Stack Store destination; operates normally; if [r7, #7] = 0, Attack Possible"
+800004c	4000	31fb	adds	"r1, #0xfb"	o	o	o	o	o	-	"Since r1 is the nearest ldr of 005e, effect is equivalent to NOP"
+800004e	0	2300	movs	"r3, #0"	-	-	-	-	-	-	Initialization of loop counter
+800004e	4	2304	movs	"r3, #4"	o	o	o	o	o	-	Attack Possible since it is greater than or equal to PIN_SIZE.
+800004e	8	2308	movs	"r3, #8"	o	o	o	o	o	-	Immediately terminates since it is greater than or equal to PIN_SIZE.
+800004e	10	2310	movs	"r3, #0x10"	o	o	o	o	o	-	Attack Possible since it is greater than or equal to PIN_SIZE.
+800004e	20	2320	movs	"r3, #0x20"	o	o	o	o	o	-	Immediately terminates since it is greater than or equal to PIN_SIZE.
+800004e	40	2340	movs	"r3, #0x40"	o	o	o	o	o	-	Attack Possible since it is greater than or equal to PIN_SIZE.
+800004e	80	2380	movs	"r3, #0x80"	o	o	o	o	o	-	Immediately terminates since it is greater than or equal to PIN_SIZE.
+800004e	100	2200	movs	"r2, #0"	o	o	o	o	o	-	"Equivalent to NOP; since r3 = PIN_SIZE, Attack Possible"
+800004e	200	2100	movs	"r1, #0"	o	o	o	o	o	-	"Equivalent to NOP; since r3 = PIN_SIZE, Attack Possible"
+800004e	800	2b00	cmp	"r3, #0"	o	o	o	o	o	-	"Equivalent to NOP; since r3 = PIN_SIZE, Attack Possible"
+800004e	1000	3300	adds	"r3, #0"	o	o	o	o	o	-	"Equivalent to NOP; since r3 = r3 + 0, effectively NOP; since r3 = PIN_SIZE, Attack Possible"
+800004e	2000	300	lsls	"r0, r0, #0xc"	o	o	o	o	o	-	"Equivalent to NOP; since r3 = PIN_SIZE, Attack Possible"
+800004e	4000	6300	str	"r0, [r0, #0x30]"	o	o	o	o	o	-	"Store to [r0, #0x30]; since r0 = g_userPin, no impact. Thus, equivalent to NOP and Attack Possible"
+800004e	8000	a300	adr	"r3, #0"	o	o	o	o	o	-	"ADR (Address Register): r3 = PC + #0, so larger than PIN_SIZE, Attack Possible"
+8000050	0	617b	str	"r3, [r7, #0x14]"	-	-	-	-	-	-	Store loop counter to stack
+8000050	1	617a	str	"r2, [r7, #0x14]"	o	o	o	o	o	-	"Since r2 = PIN_SIZE, Attack Possible"
+8000050	2	6179	str	"r1, [r7, #0x14]"	o	o	o	o	o	-	"Since r1 = g_cardPin, Attack Possible because greater than PIN_SIZE"
+8000050	4	617f	str	"r7, [r7, #0x14]"	o	o	o	o	o	-	"Since r7 = sp >= PIN_SIZE, Attack Possible"
+8000050	100	607b	str	"r3, [r7, #4]"	o	o	o	o	o	-	"Change save destination; since [r7+7] is PIN_SIZE, overwriting 4 bytes at [r7+4] will zero up to [r7+7]; initial value of [r7+0x14] is 0, i = PIN_SIZE = 0, so Attack Possible"
+8000052	0	e00e	b	#0x1020	-	-	-	-	-	-	Jump to 8000072 (i < PIN_SIZE check)
+8000052	1	e00f	b	#0x1022	o	o	o	o	o	-	"Jump to 8000074; skip loading PIN_SIZE to r3; since loop counter r3=0, Attack Possible"
+8000052	80	e08e	b	#0x1120	o	o	o	o	o	-	Jump to 8000172; jump to data area immediately before super_secret; Attack Possible
+8000052	8000	600e	str	"r6, [r1]"	o	o	o	o	o	-	"Write r6 to *g_cardPin (1234); at main, r6=0, so cardPin=0=userPin, Attack Possible"
+8000056	0	68fa	ldr	"r2, [r7, #0xc]"	-	-	-	-	-	-	Load a1 (g_userPin) to r2
+8000056	40	68ba	ldr	"r2, [r7, #8]"	o	o	o	o	o	-	Load a2 (g_cardPin) to r2; Attack Possible (repeated)
+800005a	0	781a	ldrb	"r2, [r3]"	-	-	-	-	-	-	Load a1[i] to r2
+800005a	100	791a	ldrb	"r2, [r3, #4]"	o	o	o	o	o	-	"a1[i+4] = a2[i], so a1 equals a2, Attack Possible (repeated)"
+800005c	0	697b	ldr	"r3, [r7, #0x14]"	-	-	-	-	-	-	Load i to r3
+800005c	2	6979	ldr	"r1, [r7, #0x14]"	o		o		o	Initial state	"Equivalent to NOP; since r3 = *a1[i], accesses invalid address (a1+a2+i) = 0x4000_000c; access to peripheral region possible"
+800005c	200	6b7b	ldr	"r3, [r7, #0x34]"	o	o	o		o	Initial state	"Load value to r3; access to 0x20001ffc, contains 0xffffffff; this is lr of push {r7, lr} in reset_handler; lr retains 0xFFFFFFFF at reset by design"
+800005c	800	617b	str	"r3, [r7, #0x14]"	o		o		o	Initial state	"Since r3 = *a1[i], this value goes into i; accesses address (a1+a2+i) = 0x4000_000c[i]; access to peripheral region possible"
+800005c	2000	497b	ldr	"r1, [pc, #0x1ec]"	o		o		o	Initial state	"Equivalent to NOP; since r3 = *a1[i], accesses invalid address (a1+a2+i); access to peripheral region possible"
+800005c	4000	297b	cmp	"r1, #0x7b"	o		o		o	Initial state	"Equivalent to NOP; since r3 = *a1[i], accesses invalid address (a1+a2+i); access to peripheral region possible"
+800005e	0	68b9	ldr	"r1, [r7, #8]"	-	-	-	-	-	-	Load g_cardPin to r1
+800005e	2	68bb	ldr	"r3, [r7, #8]"	o		o		o	Initial state	"r1 = *a2 = *g_cardPin; since r3 = *g_cardPin, subsequently r3 = r3 + r1 == a2[a2] = 0x4000_0010, accesses peripheral region"
+800005e	40	68f9	ldr	"r1, [r7, #0xc]"	o	o	o	o	o	-	Load a1 (g_userPin) to r1; Attack Possible
+800005e	200	6ab9	ldr	"r1, [r7, #0x28]"	o	o	o	o	o	-	"r1 = [sp+0x28] = sp+0x20 is loaded; 0 is stored at this address, so [r1+r3] points to 0, Attack Possible"
+8000060	0	440b	add	"r3, r1"	-	-	-	-	-	-	r3 = r3 + r1 = *a2[i]
+8000060	8	4403	add	"r3, r0"	o	o	o	o	o	-	"Since r0 = *g_userPin, r3 = *a1[i]; Attack Possible"
+8000060	400	400b	ands	"r3, r1"	o		o		o	Initial state	"Since r3 = i (0~3); r1 = 0x2000_0008, so 'ands' is always 0; access to aliased region, [0] = 0x2000_2000; since ldrb loads and compares only 1 byte, the part corresponding to g_cardPin is always 0, Attack Possible"
+8000062	0	781b	ldrb	"r3, [r3]"	-	-	-	-	-	-	"r3 = a2[i]; if 0 is loaded into r3, Attack Possible"
+8000062	8	7813	ldrb	"r3, [r2]"	o		o		o	Initial state	"r3 = [a1[i]] = [0] = 0x2000_2000 & 0xFF, Attack Possible"
+8000062	20	783b	ldrb	"r3, [r7]"	o	o	o	o	o	-	"r3 = [r7]; depends on sp; since 0x20001fc8 = 0, Attack Possible"
+8000062	100	791b	ldrb	"r3, [r3, #4]"	o		o	o	o	Initial state	"r3 = a2[i+4]; there are zeros in unused regions, Attack Possible"
+8000062	200	7a1b	ldrb	"r3, [r3, #8]"	o		o	o	o	Initial state	"r3 = a2[i+8]; there are zeros in unused regions, Attack Possible"
+8000062	400	7c1b	ldrb	"r3, [r3, #0x10]"	o		o	o	o	Initial state	"r3 = a2[i+16]; there are zeros in unused regions, Attack Possible"
+8000062	2000	581b	ldr	"r3, [r3, r0]"	o		o		o	Initial state	"Since r0 = *g_userPin, r3 = (a2+a1)[i] = 0x4000_000c[i]; access to peripheral region"
+8000064	0	429a	cmp	"r2, r3"	-	-	-	-	-	-	a1[i] vs. a2[i]; N flag is set at execution
+8000064	1	429b	cmp	"r3, r3"	o	o	o	o	o	-	Always True (repeated)
+8000064	8	4292	cmp	"r2, r2"	o	o	o	o	o	-	Always True (repeated)
+8000064	80	421a	tst	"r2, r3"	o	o	o	o	o	-	"r2 & r3 and since r2 = 0, Attack Possible"
+8000064	100	439a	bics	"r2, r3"	o	o	o	o	o	-	"Bitwise Clear: r2 = r2 AND (not r3); since r2 = userPin, always 0; Attack Possible"
+8000064	200	409a	lsls	"r2, r3"	o	o	o	o	o	-	"r2 = r2 << r3 and since r2 = 0, Z=1, Attack Possible"
+8000066	0	d001	beq	#0x1006	-	-	-	-	-	-	r3 = 0 for loop continuation and to avoid jump
+8000066	100	d101	bne	#0x1006	o	o	o	o	o	-	Always True (repeated)
+8000066	400	d401	bmi	#0x1006	o	o	o	o	o	-	"Branch if minus: r2=0, r3>0 so always true (repeated)"
+8000068	0	2300	movs	"r3, #0"	-	-	-	-	-	-	return value r3=0
+8000068	1	2301	movs	"r3, #1"	o	o	o	o	o	-	"return 1, always true"
+8000068	100	2200	movs	"r2, #0"	o	o	o	o	o	-	"Equivalent to NOP and r3 != 0, always true"
+8000068	200	2100	movs	"r1, #0"	o	o	o	o	o	-	"Equivalent to NOP and r3 != 0, always true"
+8000068	800	2b00	cmp	"r3, #0"	o	o	o	o	o	-	"Equivalent to NOP and r3 != 0, always true"
+8000068	1000	3300	adds	"r3, #0"	o	o	o	o	o	-	"Equivalent to NOP and r3 != 0, always true"
+8000068	2000	300	lsls	"r0, r0, #0xc"	o	o	o	o	o	-	"Equivalent to NOP and r3 != 0, always true"
+8000068	4000	6300	str	"r0, [r0, #0x30]"	o	o	o	o	o	-	"Equivalent to NOP and r3 != 0, always true"
+800006a	0	e007	b	#0x1012	-	-	-	-	-	-	exit with 0
+800006a	1	e006	b	#0x1010	o	o	o	o	o	-	"Always true due to jump to r3, #1"
+800006a	2	e005	b	#0x100e	o	o	o	o	o	-	"Jump to 8000078; continue with blt (if less than); movs sets only Z=0; since N=V, at loop end Attack Possible"
+800006a	4	e003	b	#0x100a	o	o	o	o	o	-	"Jump to 8000074; r2 = i; since r3 = a2[i], loop continues for 4 times as r2 < r3; loop ends after 5th time, Attack Possible"
+800006a	80	e087	b	#0x1112	o		o	o	o	Success condition	"Jump to 800017c; since it is the nop area of super_secret, Attack Possible"
+800006a	2000	c007	stm	"r0!, {r0, r1, r2}"	o	o	o	o	o	-	"STM (Store Multiple): store r0, r1, r2 to memory pointed by r0, then update r0 (r0 = r0 + 4*3); since r0 = g_userPin, possible to store, Attack Possible"
+800006a	4000	a007	adr	"r0, #0x1c"	o	o	o	o	o	-	"r0 = PC + 0x1C; equivalent to NOP, loop continues; Attack Possible if i > 4 (repeated)"
+800006a	8000	6007	str	"r7, [r0]"	o	o	o	o	o	-	"Since r0 = g_userPin, access here is possible. Almost equivalent to NOP (repeated)"
+8000072	0	79fb	ldrb	"r3, [r7, #7]"	-	-	-	-	-	-	Load PIN_SIZE into r3 (i < PIN_SIZE)
+8000072	1	79fa	ldrb	"r2, [r7, #7]"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (i < i) always False. Therefore, loop does not iterate, exit with 1."
+8000072	2	79f9	ldrb	"r1, [r7, #7]"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (i < i) always False. Therefore, loop does not iterate, exit with 1."
+8000072	40	79bb	ldrb	"r3, [r7, #6]"	o	o	o	o	o	-	"Load undefined value into r3; since it is 0, i = r3 = 0, Attack Possible"
+8000072	80	797b	ldrb	"r3, [r7, #5]"	o	o	o	o	o	-	"Load undefined value into r3; since it is 0, i = r3 = 0, Attack Possible"
+8000072	100	78fb	ldrb	"r3, [r7, #3]"	o	o	o	o	o	-	"Load undefined value into r3; since it is 0, i = r3 = 0, Attack Possible"
+8000072	400	7dfb	ldrb	"r3, [r7, #0x17]"	o	o	o	o	o	-	"Load undefined value into r3; since it is 0, i = r3 = 0, Attack Possible"
+8000072	800	71fb	strb	"r3, [r7, #7]"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (i < i) always False. Therefore, loop does not iterate, exit with 1."
+8000072	4000	39fb	subs	"r1, #0xfb"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (i < i) always False. Therefore, loop does not iterate, exit with 1."
+8000074	0	697a	ldr	"r2, [r7, #0x14]"	-	-	-	-	-	-	Load i into r2 (i < PIN_SIZE)
+8000074	1	697b	ldr	"r3, [r7, #0x14]"	o	o	o	o	o	-	"r2 is inherited as PIN_SIZE; i is loaded into r3, since PIN_SIZE < i always False, Attack Possible"
+8000074	2	6978	ldr	"r0, [r7, #0x14]"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (PIN_SIZE < PIN_SIZE) always False. Therefore, loop does not iterate, exit with 1."
+8000074	4	697e	ldr	"r6, [r7, #0x14]"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (PIN_SIZE < PIN_SIZE) always False. Therefore, loop does not iterate, exit with 1."
+8000074	80	69fa	ldr	"r2, [r7, #0x1c]"	o	o	o	o	o	-	"Load undefined value into r2; since 0x20001fe8 is loaded, Attack Possible"
+8000074	100	687a	ldr	"r2, [r7, #4]"	o	o	o	o	o	-	"Load undefined value into r2; since 0x40000000 is loaded, Attack Possible"
+8000074	800	617a	str	"r2, [r7, #0x14]"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (PIN_SIZE < PIN_SIZE) always False. Therefore, loop does not iterate, exit with 1."
+8000074	2000	497a	ldr	"r1, [pc, #0x1e8]"	o	o	o	o	o	-	"Load 0x800025c; equivalent to NOP; at first entry, if (PIN_SIZE < PIN_SIZE) always False. Therefore, loop does not iterate, exit with 1."
+8000074	4000	297a	cmp	"r1, #0x7a"	o	o	o	o	o	-	"Equivalent to NOP; at first entry, if (PIN_SIZE < PIN_SIZE) always False. Therefore, loop does not iterate, exit with 1."
+8000076	0	429a	cmp	"r2, r3"	-	-	-	-	-	-	i < PIN_SIZE
+8000076	1	429b	cmp	"r3, r3"	o	o	o	o	o	-	"Always True, so loop does not iterate and ends"
+8000076	2	4298	cmp	"r0, r3"	o	o	o	o	o	-	"Since r0 = *g_userPin, not branched by blt if greater than or equal to PIN_SIZE; Attack Possible"
+8000076	8	4292	cmp	"r2, r2"	o	o	o	o	o	-	Attack Possible if N=V=0
+8000076	40	42da	cmn	"r2, r3"	o	o	o	o	o	-	Compare Negative: computes r2 + r3; Attack Possible if N=V=0
+8000076	80	421a	tst	"r2, r3"	o	o	o	o	o	-	"Since t2 & t3, Attack Possible if N=V=0"
+8000076	100	439a	bics	"r2, r3"	o	o	o	o	o	-	"r2 = r2 & (~r3); at first i=0, r2=0; Z=1; N=V=0, not branched by blt; Attack Possible"
+8000076	200	409a	lsls	"r2, r3"	o	o	o	o	o	-	"r2 = r2 << r3; since r2=0, Z=1; N=V=0, not branched by blt, Attack Possible"
+8000076	400	469a	mov	"sl, r3"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+8000076	800	4a9a	ldr	"r2, [pc, #0x268]"	o	o	o	o	o	-	"If access to 0x80002de is allowed, equivalent to NOP, Attack Possible"
+8000076	1000	529a	strh	"r2, [r3, r2]"	o		o			Write attribute	STRH (Store Register Halfword): stores lower 16 bits of r2 at [r3+r2]; since r3+r2 is 4. Cannot write data to aliased region.
+8000076	2000	629a	str	"r2, [r3, #0x28]"	o		o			Write attribute	"If access to *(4+0x28) is allowed, equivalent to NOP; write data to aliased region, but it's not allowed."
+8000076	4000	029a	lsls	"r2, r3, #0xa"	o	o	o	o	o	-	r2 = r3 << 10; Attack Possible if N=V=0
+8000076	8000	c29a	stm	"r2!, {r1, r3, r4, r7}"	o		o			Write attribute	r2 = i = 0; write data to address 0; cannot write data to aliased region.
+8000078	0	dbec	blt	#0xfdc	-	-	-	-	-	-	"If N != V (N=1), branch and loop continues; if not, win"
+8000078	8	dbe4	blt	#0xfcc	o	o	o	o	o	-	"Jump to 8000044; re-executes from add r7,sp,#0, but r2 = i = r3 overwrites PIN_SIZE; at second iteration, always True since i = i, Attack Possible"
+8000078	100	daec	bge	#0xfdc	o	o	o	o	o	-	"Branch if N=V; since N=1, not valid, Attack Possible"
+8000078	8000	5bec	ldrh	"r4, [r5, r7]"	o	o	o	o	o	-	"Load r4 with (r5+r7) & 0xFFFF; since r7 = sp, depends on r5 at main; if access is allowed, equivalent to NOP, Attack Possible"
+800008c	0	2200	movs	"r2, #0"	-	-	-	-	-	-	g_authenticated = 0; r2 = 0
+800008c	1	2201	movs	"r2, #1"	o	o	o	o	o	-	"Since g_authenticated = 1, Attack Possible"
+800008c	2	2202	movs	"r2, #2"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	4	2204	movs	"r2, #4"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	8	2208	movs	"r2, #8"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	10	2210	movs	"r2, #0x10"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	20	2220	movs	"r2, #0x20"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	40	2240	movs	"r2, #0x40"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	80	2280	movs	"r2, #0x80"	o	o	o	o	o	-	"Since g_authenticated != 0, Attack Possible"
+800008c	8000	a200	adr	"r2, #0"	o	o	o	o	o	-	"Since r2 = PC + 0, g_authenticated != 0, Attack Possible"
+800009a	0	2204	movs	"r2, #4"	-	-	-	-	-	-	r2 = PIN_SIZE; argument of byteArrayCompare; Attack Possible if IS
+800009a	4	2200	movs	"r2, #0"	o	o	o	o	o	-	"Since PIN_SIZE = 0, Attack Possible"
+800009a	100	2304	movs	"r3, #4"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+800009a	200	2004	movs	"r0, #4"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+800009a	400	2604	movs	"r6, #4"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+800009a	800	2a04	cmp	"r2, #4"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+800009a	2000	204	lsls	"r4, r0, #8"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+800009a	4000	6204	str	"r4, [r0, #0x20]"	o	o	o			Write attribute	"Depending on r0 at main; if write access to r0[0x20] is allowed, Attack Possible; since r0=0, in aliased region, write not allowed, Attack Failed"
+800009c	0	4910	ldr	"r1, [pc, #0x40]"	-	-	-	-	-	-	r1 = *g_cardPin; argument for byteArrayCompare
+800009c	1	4911	ldr	"r1, [pc, #0x44]"	o	o	o	o	o	-	"Since r1 = *g_userPin, r1 = r0, Attack Possible"
+800009c	8000	c910	ldm	"r1!, {r4}"	o		o		o	Initial state	"str r4, [r1]; equivalent to r1 = r1 + 4; at initialize, r1 = 4 and then r1 = 8; in byteArrayCompare, access to a2[i] = 8[i]; since after 0x8 is zero for a while, matches g_userPin, Attack Possible"
+800009e	0	4811	ldr	"r0, [pc, #0x44]"	-	-	-	-	-	-	r0 = *g_userPin; argument for byteArrayCompare
+800009e	1	4810	ldr	"r0, [pc, #0x40]"	o	o	o	o	o	-	"Since r0 = *g_cardPin, r0 = r1, Attack Possible"
+800009e	800	4011	ands	"r1, r2"	o		o		o	Initial state	"AND with Flags: r1 = r1 & PIN_SIZE = 0x20000008 & 4 = 0; since r0=0, byteArrayCompare(0,0,4) gives Attack Possible"
+800009e	4000	811	lsrs	"r1, r2, #0x20"	o		o		o	Initial state	"LSRF (Logical Shift Right with Flags): r1 = r2 >> 32 = 0; since r0=0, byteArrayCompare(0,0,4) gives Attack Possible"
+80000a6	0	2b01	cmp	"r3, #1"	-	-	-	-	-	-	"If byteArrayCompare != 1, r3 = 1; branch if Z = 0"
+80000a6	1	2b00	cmp	"r3, #0"	o	o	o	o	o	-	"Since byteArrayCompare == 0, Attack Possible"
+80000a6	2000	0b01	lsrs	"r1, r0, #0xc"	o	o	o	o	o	-	"r1 = r0 >> 12; since r0=0, Z=1, so no branch, Attack Possible"
+80000a8	0	d107	bne	#0x1012	-	-	-	-	-	-	"Branch on Z=0, branch leads to Attack Failed; Attack Possible if IS"
+80000a8	100	d007	beq	#0x1012	o	o	o	o	o	-	"Since branch is on Z=1, normally does not branch, Attack Possible"
+80000a8	400	d507	bpl	#0x1012	o	o	o	o	o	-	"Branch if plus: since N=0, branch; since 0-1, Z=0; N=1 so no branch, Attack Possible"
+80000a8	1000	c107	stm	"r1!, {r0, r1, r2}"	o		o	o	o	Unimplemented instruction	"If access to [r1] is allowed, Attack Possible; since r1 = *g_cardPin, access is possible"
+80000a8	2000	f107 4b0c	add.w	"r11, r7, #8c000000"	o		o			Write attribute	"Since r11 is unused, effectively skips 2 instructions; however, at 0x080000ae, writing to [r3] occurs, but with r3=0 and no write attribute"
+80000a8	8000	5107	str	"r7, [r0, r4]"	o		o			Write attribute	"Since r0=0, [r4]; depends on r4 at main; if write is allowed, equivalent to NOP, Attack Possible; with r4=0, no write attribute, Attack Failed"
+80000c8	0	4b04	ldr	"r3, [pc, #0x10]"	-	-	-	-	-	-	"Update g_ptc, g_ptc--"
+80000c8	40	4b44	ldr	"r3, [pc, #0x110]"	o	o	o	o	o	-	"At 80001d8: since *g_authenticated = 2 is directly written, Attack Possible"
+8.00E+04	0	20000008	movs	"r0, #0"	-	-	-	-	-	-	Invalid as it is data corruption
+8.00E+04	20	20000028	movs	"r0, #0"		o				Not inst	
+8.00E+04	40	20000048	movs	"r0, #0"		o				Not inst	
+8.00E+04	80	20000088	movs	"r0, #0"		o				Not inst	
+8.00E+04	100	20000108	movs	"r0, #0"		o				Not inst	
+8.00E+04	200	20000208	movs	"r0, #0"		o				Not inst	
+8.00E+04	400	20000408	movs	"r0, #0"		o				Not inst	
+8.00E+04	800	20000808	movs	"r0, #0"		o				Not inst	
+8.00E+04	1000	20001008	movs	"r0, #0"		o				Not inst	
+8000118	0	2300	movs	"r3, #0"	-	-	-	-	-	-	"At init, loop counter i=0; if i >= PIN_SIZE, Attack Possible; Attack Possible if IS"
+8000118	4	2304	movs	"r3, #4"	o		o	o	o	Initial state	Attack Possible since i >= PIN_SIZE
+8000118	8	2308	movs	"r3, #8"	o		o	o	o	Initial state	Attack Possible since i >= PIN_SIZE
+8000118	10	2310	movs	"r3, #0x10"	o		o	o	o	Initial state	Attack Possible since i >= PIN_SIZE
+8000118	20	2320	movs	"r3, #0x20"	o		o	o	o	Initial state	Attack Possible since i >= PIN_SIZE
+8000118	40	2340	movs	"r3, #0x40"	o		o	o	o	Initial state	Attack Possible since i >= PIN_SIZE
+8000118	80	2380	movs	"r3, #0x80"	o		o	o	o	Initial state	Attack Possible since i >= PIN_SIZE
+8000118	100	2200	movs	"r2, #0"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+8000118	200	2100	movs	"r1, #0"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+8000118	800	2b00	cmp	"r3, #0"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+8000118	1000	3300	adds	"r3, #0"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+8000118	2000	300	lsls	"r0, r0, #0xc"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+8000118	4000	6300	str	"r0, [r0, #0x30]"	o		o			Write attribute	"r0 is decided at main; if write access to [r0+0x30] is allowed, Attack Possible; since r0=0, no write attribute, Attack Failed"
+8000118	8000	a300	adr	"r3, #0"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+800011a	0	607b	str	"r3, [r7, #4]"	-	-	-	-	-	-	"At init, loop counter i=0"
+800011a	4	607f	str	"r7, [r7, #4]"	o		o	o	o	Initial state	"Since r7 = sp >= PIN_SIZE, Attack Possible"
+800011c	0	e00b	b	#0x101a	-	-	-	-	-	-	Jump to loop counter check for g_cardPin
+800011c	4	e00f	b	#0x1022	o		o	o	o	Initial state	"Jump to 800013e; skips only initialization of g_cardPin, Attack Possible"
+800011c	10	e01b	b	#0x103a	o		o	o	o	Initial state	"Jump to 8000156; init ends, Attack Possible"
+800011c	20	e02b	b	#0x105a	o	o	o	o	o	-	"Jump to 8000176; data area just before super_secret, Attack Possible"
+800011c	40	e04b	b	#0x109a	o		o	o	o	Initial state	"Jump to 80001b6; jumps to unused function oracle(), returns normally; no stack-relative instructions, operates correctly; skips initialization, Attack Possible"
+8000122	0	3301	adds	"r3, #1"	-	-	-	-	-	-	g_cardPin initialization logic: Pin[i] = i + 1
+8000122	8000	b301	cbz	"r1, #0x1044"	o	o	o	o	o	-	"Compare and Branch on Zero: if r1 == 0, jump to 8000166; since the area is just before super_secret, Attack Possible; r1 is determined at main; r1 = 0, Attack Possible"
+8000124	0	b2d9	uxtb	"r1, r3"	-	-	-	-	-	-	Assign i+1 (sign-extended) to r1; Attack Possible in IS
+8000124	1	b2d8	uxtb	"r0, r3"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+8000124	2	b2db	uxtb	"r3, r3"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+8000124	4	b2dd	uxtb	"r5, r3"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+8000124	8	b2d1	uxtb	"r1, r2"	o	o	o	o	o	-	"Since r2 = 0, equivalent to NOP, Attack Possible"
+8000124	10	b2c9	uxtb	"r1, r1"	o	o	o	o	o	-	"Since r1 = 0 at main, equivalent to NOP, Attack Possible"
+8000124	200	b0d9	sub	"sp, #0x164"	o	o	o	o	o	-	"Loops 4 times, finally restores sp with mov sp, r7, so no issue. Equivalent to NOP, Attack Possible"
+8000124	800	bad9	revsh	"r1, r3"	o	o	o	o	o	-	"Reverse the byte order in bottom halfword: a[i] = 0x0100; assignment to cardPin is done with strb, so 0 is assigned, Attack Possible"
+8000124	1000	a2d9	adr	"r2, #0x364"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+8000124	8000	32d9	adds	"r2, #0xd9"	o	o	o	o	o	-	"Equivalent to NOP, Attack Possible"
+8000126	0	4a12	ldr	"r2, [pc, #0x48]"	-	-	-	-	-	-	"r2 = *g_cardPin; in IS, write occurs to abnormal address; if avoided, Attack Possible"
+8000126	1	4a13	ldr	"r2, [pc, #0x4c]"	o		o	o	o	Initial state	"r2 = *g_userPin; overwritten in subsequent operations, Attack Possible"
+8000126	2	4a10	ldr	"r2, [pc, #0x40]"	o		o	o	o	Initial state	"r2 = *g_ptc; writes up to g_userPin[0], but later overwritten, Attack Possible"
+8000126	40	4a52	ldr	"r2, [pc, #0x148]"	o		o			Write attribute	"r2 = *0x08000270 = 0; write to flash alias occurs, Attack Failed"
+8000126	80	4a92	ldr	"r2, [pc, #0x248]"	o		o			Write attribute	"r2 = *0x08000370 = 0; write to flash alias occurs, Attack Failed"
+8000126	100	4b12	ldr	"r3, [pc, #0x48]"	o		o			Write attribute	"r2 = 0; r3 = 0--3; write to flash alias occurs, Attack Failed"
+8000126	200	4812	ldr	"r0, [pc, #0x48]"	o		o			Write attribute	"r2 = 0; r3 = 0--3; write to flash alias occurs, Attack Failed"
+8000126	400	4.00E+12	ldr	"r6, [pc, #0x48]"	o		o			Write attribute	"r2 = 0; r3 = 0--3; write to flash alias occurs, Attack Failed"
+8000126	800	4212	tst	"r2, r2"	o		o			Write attribute	"r2 = 0; r3 = 0--3; write to flash alias occurs, Attack Failed"
+8000126	1000	5a12	ldrh	"r2, [r2, r0]"	o		o			Write attribute	"r2 = 0, r0 = 0; [0] = 0x20002000 & 0xFFFF = 0x2000; write to flash alias occurs, Attack Failed"
+8000126	2000	6a12	ldr	"r2, [r2, #0x20]"	o		o			Write attribute	"On first access, r2 = 0; write to [0x20] occurs, Attack Failed"
+8000126	4000	0a12	lsrs	"r2, r2, #8"	o		o			Write attribute	"r2 = r2 >> 8 = 0; write to flash alias occurs, Attack Failed"
+8000128	0	687b	ldr	"r3, [r7, #4]"	-	-	-	-	-	-	Load i into r3
+8000128	1	687a	ldr	"r2, [r7, #4]"	o		o			Write attribute	"r2 = [0x20001fe4] = 0; r3 contains i++ so next instruction [r2 + r3] = [i++] executes a str, leading to write in flash alias, Attack Failed"
+800012a	0	4413	add	"r3, r2"	-	-	-	-	-	-	"Add r3 = r3(i) + r2(g_cardPin); if skipped, write to [r3] occurs"
+800012a	1	4412	add	"r2, r2"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012a	2	4411	add	"r1, r2"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012a	8	441b	add	"r3, r3"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012a	10	4403	add	"r3, r0"	o		o			Write attribute	"Depends on r0 at main; access to r0[i]; r0 = 0, Attack Failed"
+800012a	20	4433	add	"r3, r6"	o		o			Write attribute	"Depends on r6 at main; access to r6[i]; r6 = 0, Attack Failed"
+800012a	40	4453	add	"r3, sl"	o		o			Write attribute	"Depends on sl at main; access to sl[i]; sl = 0, Attack Failed"
+800012a	80	4493	add	"fp, r2"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012a	100	4513	cmp	"r3, r2"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012a	400	4013	ands	"r3, r2"	o		o			Write attribute	"Access with i < something, Attack Failed"
+800012a	800	4c13	ldr	"r4, [pc, #0x4c]"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012a	2000	6413	str	"r3, [r2, #0x40]"	o		o			Write attribute	"g_cardPin[0x40] is writable, but r3 = 0, Attack Failed"
+800012a	8000	c413	stm	"r4!, {r0, r1, r4}"	o		o			Write attribute	Abnormal r3 causes Attack Failed
+800012c	0	460a	mov	"r2, r1"	-	-	-	-	-	-	Originally r2 (g_cardPin); here r2 <- ++i; then [r3] = g_cardPin[i] <- r2; not Attack Possible in IS
+800012c	1	460b	mov	"r3, r1"	o		o			Write attribute	"[r3] = [++i] = *g_cardPin; no write permission, Attack Failed"
+800012c	8	4602	mov	"r2, r0"	o	o	o	o	o	-	"Depends on r0 at main; if r0 = 0, Attack Possible"
+800012c	20	462a	mov	"r2, r5"	o	o	o	o	o	-	"Depends on r5 at main; if r5 = 0, Attack Possible"
+800012c	40	464a	mov	"r2, sb"	o	o	o	o	o	-	"Depends on sb at main; if sb = 0, Attack Possible"
+800012c	4000	060a	lsls	"r2, r1, #0x18"	o	o	o	o	o	-	"r2 = r1 << 24; r1 = ++i; subsequent assignment to g_cardPin uses strb, so 0 is written, Attack Possible"
+800012e	0	701a	strb	"r2, [r3]"	-	-	-	-	-	-	g_cardPin[i] = i + 1; Attack Possible in IS
+800012e	2	7018	strb	"r0, [r3]"	o	o	o	o	o	-	"Depends on r0 at main; if r0 = 0, Attack Possible"
+800012e	4	701e	strb	"r6, [r3]"	o	o	o	o	o	-	"Depends on r6 at main; if r6 = 0, Attack Possible"
+800012e	8	7012	strb	"r2, [r2]"	o		o			Write attribute	r2 = ++i causes Attack Failed
+800012e	10	700a	strb	"r2, [r1]"	o		o			Write attribute	r1 = ++i causes Attack Failed
+800012e	20	703a	strb	"r2, [r7]"	o		o	o	o	Initial state	"Depends on r7 at main; if [r7] is writable, Attack Possible"
+800012e	100	711a	strb	"r2, [r3, #4]"	o		o	o	o	Initial state	"Since it's unused RAM, equivalent to NOP, Attack Possible"
+800012e	200	721a	strb	"r2, [r3, #8]"	o		o	o	o	Initial state	"Since it's unused RAM, equivalent to NOP, Attack Possible"
+800012e	400	741a	strb	"r2, [r3, #0x10]"	o		o	o	o	Initial state	"Since it's unused RAM, equivalent to NOP, Attack Possible"
+800012e	800	781a	ldrb	"r2, [r3]"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+800012e	4000	301a	adds	"r0, #0x1a"	o		o	o	o	Initial state	"Equivalent to NOP, Attack Possible"
+800012e	8000	f01a 687b	ands	"r8, sl, #0xfb00000"	o		o	o	o	Unimplemented instruction	"Equivalent to two NOPs; r3 = *g_cardPin[i], which is stored as i; attack succeeds in one go, Attack Possible"
+8000136	0	687b	ldr	"r3, [r7, #4]"	-	-	-	-	-	-	Load loop counter into r3; branch target is g_cardPin setup; r3 starts at 0
+8000136	8	6873	ldr	"r3, [r6, #4]"	o		o		o	Initial state	"[r6 + 4] > 4 causes Attack Possible; r6 = 0, so [4] = 0x080001a9, Attack Possible"
+8000136	10	686b	ldr	"r3, [r5, #4]"	o		o		o	Initial state	"[r5 + 4] > 4 causes Attack Possible; r5 = 0, so [4] = 0x080001a9, Attack Possible"
+8000136	20	685b	ldr	"r3, [r3, #4]"	o		o		o	Initial state	"On first iteration, r3 = 0; [4] = 0x080001a9, Attack Possible"
+8000136	80	68fb	ldr	"r3, [r7, #0xc]"	o		o	o	o	Initial state	"Depends on stack; 0x687b4a0c (pointer in initialize) exists, Attack Possible"
+8000136	100	697b	ldr	"r3, [r7, #0x14]"	o		o	o	o	Initial state	"Depends on stack; at main it's 0, but at this point it holds 0x20001ff0, Attack Possible; always Attack Possible"
+8000138	0	2b03	cmp	"r3, #3"	-	-	-	-	-	-	i < 4 check; branch if Z = 1 or N = 1
+8000138	400	2f03	cmp	"r7, #3"	o		o	o	o	Initial state	"sp > 4, Attack Possible"
+8000138	800	2303	movs	"r3, #3"	o		o	o	o	Initial state	"Since flags are not modified, Attack Possible"
+800013a	0	ddf0	ble	#0xfe4	-	-	-	-	-	-	Jump on loop counter comparison; target is g_cardPin setup
+800013a	4	ddf4	ble	#0xfec	o	o	o	o	o	-	"Jump to 8000126; scenario where g_cardPin[i] = r1; depends on r1 at main; r1 = 0, Attack Possible"
+800013a	8	ddf8	ble	#0xff4	o		o			Write attribute	"Jump to 800012e; store to [r3] occurs, Attack Failed"
+800013a	20	ddd0	ble	#0xfa4	o		o	o	o	Initial state	"Jump to 80000de; starts from data before countermeasure (e.g., mov r0, #0), goes through countermeasure, jumps to verifyPin via bx; skips processing, Attack Possible"
+800013a	100	dcf0	bgt	#0xfe4	o		o	o	o	Initial state	Branch if N = 0 and Z = 0; Attack Possible
+800013a	800	d5f0	bpl	#0xfe4	o		o	o	o	Initial state	"Branch if N = 0; on first i = 0 E, N = 1, so no branch; Attack Possible"
+800013a	8000	5df0	ldrb	"r0, [r6, r7]"	o		o	o	o	Initial state	"sp[r6] = sp[0] = 0; if accessible, Attack Possible"
+8000140	0	e007	b	#0x1012	-	-	-	-	-	-	Jump to userPin loop counter verification
+8000140	10	e017	b	#0x1032	o	o	o	o	o	-	"Jump to 8000172; data area immediately before super_secret, Attack Possible"
+800014a	0	701a	strb	"r2, [r3]"	-	-	-	-	-	-	Zeroing g_userPin
+800014a	100	711a	strb	"r2, [r3, #4]"	o		o	o	o	Initial state	g_userPin[i + 4] = g_cardPin[i]; Attack Possible
+8000152	0	687b	ldr	"r3, [r7, #4]"	-	-	-	-	-	-	"Load loop counter i of g_userPin; before execution, r3 = 0"
+8000152	20	685b	ldr	"r3, [r3, #4]"	o		o		o	Initial state	"Since r3 = 0; 0x4: 0x080001a9 00000000; after loop ends, overwritten; if loop runs more than 4 times, g_cardPin is overwritten with 0, Attack Possible"
+8000152	40	683b	ldr	"r3, [r7]"	o		o	o	o	Revert	"0x20001fe0: 0x00000000; remains unchanged during loop, so g_cardPin is overwritten, Attack Possible"
+8000152	1000	787b	ldrb	"r3, [r7, #1]"	o		o	o	o	Revert	"0x20001fe1: 0x00; unchanged during loop, g_cardPin is overwritten, Attack Possible"
+8000154	0	2b03	cmp	"r3, #3"	-	-	-	-	-	-	"g_userPin loop counter check; if operand #imm ≥ 7, enters g_cardPin and overwrites; if within 0x2000, memory is allocated"
+8000154	4	2b07	cmp	"r3, #7"	o	o	o	o	o	-	
+8000154	8	2b0b	cmp	"r3, #0xb"	o	o	o	o	o	-	
+8000154	10	2b13	cmp	"r3, #0x13"	o	o	o	o	o	-	
+8000154	20	2b23	cmp	"r3, #0x23"	o	o	o	o	o	-	
+8000154	40	2b43	cmp	"r3, #0x43"	o	o	o	o	o	-	
+8000154	80	2b83	cmp	"r3, #0x83"	o	o	o	o	o	-	
+8000154	100	2a03	cmp	"r2, #3"	o		o	o	o	Revert	"Since r2 = 0, loop continues indefinitely; reverting allows loop exit, Attack Possible"
+8000154	2000	0b03	lsrs	"r3, r0, #0xc"	o		o	o	o	Revert	"Since r0 = 0, Z = 1, loop continues indefinitely; reverting allows loop exit, Attack Possible"
+8000156	0	ddf4	ble	#0xfec	-	-	-	-	-	-	
+8000156	100	dcf4	bgt	#0xfec	o		o	o	o	Revert	"After last loop, if applied, enters g_cardPin and overwrites"
+8000156	800	d5f4	bpl	#0xfec	o		o	o	o	Revert	"Branch if N = 0; apply from i = 3, Attack Possible"
+8000158	0	bf00	nop		-	-	-	-	-	-	
+8000158	1	bf01	itttt	eq		o				Unexplainable	"If-Then x4 (executes next 4 instructions only if Z = 1): until pop becomes NOP; stack corrupted, abnormal behavior follows"
+800015a	0	bf00	nop		-	-	-	-	-	-	
+800015a	1	bf01	itttt	eq	o	o	o	o	o	-	"Until bx becomes NOP; stack is corrupted, but reaches super_secret"
+8000162	0	4770	bx	lr	-	-	-	-	-	-	ret; Attack Possible in IS
+8000162	80	47f0	blx	lr		o				Unimplemented instruction	"Save lr = PC + 4; will be overwritten by later bl verifyPin, so meaningless"
+8000162	100	4670	mov	"r0, lr"	o	o	o	o	o	-	Equivalent to NOP
+8000162	200	4570	cmp	"r0, lr"	o	o	o	o	o	-	Equivalent to NOP
+8000162	400	4370	muls	"r0, r6, r0"	o	o	o	o	o	-	Equivalent to NOP
+8000162	800	4f70	ldr	"r7, [pc, #0x1c0]"	o	o	o	o	o	-	Access to 0x8000322; Attack Possible
+8000162	1000	5770	ldrsb	"r0, [r6, r5]"	o		o		o	Initial state	"[r6 + r5] = [0] = 0x20002000 & 0xFF; since r0 = 0 (no sign extension), Attack Possible"
+8000162	2000	6770	str	"r0, [r6, #0x74]"	o		o			Write attribute	"r6 = 0; writing to flash alias occurs, Attack Failed"
+8000162	4000	770	lsls	"r0, r6, #0x1d"	o	o	o	o	o	-	Equivalent to NOP
+8000162	8000	c770	stm	"r7!, {r4, r5, r6}"	o	o	o	o	o	-	"Stack operations occur on SP, but Attack Possible"
+8000170	0	20000008	movs	"r0, #0"	-	-	-	-	-	-	"Located in data area, not executed in practice, Attack Failed"

@@ -1,0 +1,6 @@
+Instructions: 4-200
+    Registers-source: r0, r1, r2, r3, r7, D8, LR, PC, SP
+        Op_codes: ALL
+            Lifespan: 1,revert
+                Operations: xOR
+                    Masks:1<0<32

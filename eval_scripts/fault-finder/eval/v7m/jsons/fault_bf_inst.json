@@ -1,0 +1,13 @@
+{
+    "binary json filename"  : "my_research/v7m/jsons/binary-details.json",
+    "mode"                  : "fault",
+    "output directory name" : "my_research/v7m/outputs/fault_bf_inst/",
+    "threads"               : "6",
+    "fault model filename"  : "my_research/v7m/faultmodels/verifypin_bf_inst.txt",
+    "checkpoints"           : "no",
+    "number of checkpoints" : "notused",
+    "equivalents"           : "no",
+    "timeit"                : "no",
+    "display disassembly"   : "no",
+    "max instructions"      : "2000"
+}

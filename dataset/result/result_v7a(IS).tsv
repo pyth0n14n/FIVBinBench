@@ -1,0 +1,180 @@
+IP	code	opcode	oprand	comment	FaultARM	fault-injection-simulation	ChaosDuck	FaultFinder (rehosting)	FaultFinder	Grand Truth	Type	Reason
+00000598 <byteArrayCompare>:												
+ 598:	e52db004 	push	{fp}	"@ (str fp, [sp, #-4]!)"								
+ 59c:	e28db000 	add	"fp, sp, #0"									
+ 5a0:	e24dd01c 	sub	"sp, sp, #28"									
+ 5a4:	e50b0010 	str	"r0, [fp, #-16]"									
+ 5a8:	e50b1014 	str	"r1, [fp, #-20]"									Skipping stack storage of argument a2 (cardPin) in byteArrayCompare. Depends on stack state; possible that non-zero value is written by ELF loader (qemu-arm). OK if zero-initialized (perhaps a side effect of skipping <_start>)
+ 5ac:	e1a03002 	mov	"r3, r2"									
+ 5b0:	e54b3015 	strb	"r3, [fp, #-21]"			o	o	o	o	o	-	"Skipping saving of 'size'. Depends on stack state. If zero-initialized, then True."
+ 5b4:	e3a03000 	mov	"r3, #0"		o	o	o	o	o	o	-	size' goes into loop cnt -> immediately exits
+ 5b8:	e50b3008 	str	"r3, [fp, #-8]"		o		o	o		o	Initial state	"Skipping initialization of loop cnt in byteArrayCompare. Depends on stack state. If stack holds value greater than PIN_SIZE=3, then True."
+ 5bc:	ea00000e 	b	5fc <byteArrayCompare+0x64>									
+ 5c0:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 5c4:	e51b2010 	ldr	"r2, [fp, #-16]"			o					Unexplainable	"Skipping a1 results in i[i], which is unlikely to match a2; symbolic function arguments may be ignoring actual values."
+ 5c8:	e0823003 	add	"r3, r2, r3"			o					Unexplainable	"Skipping a1 + i results in i[0], same as above."
+ 5cc:	e5d32000 	ldrb	"r2, [r3]"									
+ 5d0:	e51b3008 	ldr	"r3, [fp, #-8]"			o					Invalid access	"Same as above for a2. If accessing 0x0~0x4 results in 0, matches fixed userPin, but segfault occurs."
+ 5d4:	e51b1014 	ldr	"r1, [fp, #-20]"									
+ 5d8:	e0813003 	add	"r3, r1, r3"			o					Invalid access	"Same as above for a2. If accessing 0x0~0x4 results in 0, matches fixed userPin, but segfault occurs."
+ 5dc:	e5d33000 	ldrb	"r3, [r3]"									
+ 5e0:	e1520003 	cmp	"r2, r3"									
+ 5e4:	0a000001 	beq	5f0 <byteArrayCompare+0x58>									
+ 5e8:	e3a03000 	mov	"r3, #0"			o	o	o	o	o	-	"Returns a2[i]; if not 0 then True; since a2 = g_cardPin = 1234, always True in this program."
+ 5ec:	ea000007 	b	610 <byteArrayCompare+0x78>			o	o	o	o	o	-	Skipping jump to ret after r = 0. Possible if Permanent.
+ 5f0:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 5f4:	e2833001 	add	"r3, r3, #1"									
+ 5f8:	e50b3008 	str	"r3, [fp, #-8]"									
+ 5fc:	e55b3015 	ldrb	"r3, [fp, #-21]"			o	o	o	o	o	-	"First time, if (i < 0) -> always True -> exit with 1"
+ 600:	e51b2008 	ldr	"r2, [fp, #-8]"		o	o	o	o	o	o	-	"First time, if (size < size) -> always True -> exit with 1"
+ 604:	e1520003 	cmp	"r2, r3"		o	o	o	o	o	o	-	cmp skip depends on a1[i] == a2[i]; a1 = g_userPin = 0000 -> always a1[i] < a2[i] -> True
+ 608:	baffffec 	blt	5c0 <byteArrayCompare+0x28>		o	o	o	o	o	o	-	Skipping jump to a1 vs. a2 logic -> always exit with 1
+ 60c:	e3a03001 	mov	"r3, #1"									
+ 610:	e1a00003 	mov	"r0, r3"									
+ 614:	e28bd000 	add	"sp, fp, #0"									
+ 618:	e49db004 	pop	{fp}	"@ (ldr fp, [sp], #4)"								
+ 61c:	e12fff1e 	bx	lr									
+00000620 <verifyPIN>:												
+ 620:	e92d4830 	push	"{r4, r5, fp, lr}"									
+ 624:	e28db00c 	add	"fp, sp, #12"									
+ 628:	e59f40b4 	ldr	"r4, [pc, #180]"									
+ 62c:	e08f4004 	add	"r4, pc, r4"									
+ 630:	e59f30b0 	ldr	"r3, [pc, #176]"									
+ 634:	e7943003 	ldr	"r3, [r4, r3]"									
+ 638:	e3a02000 	mov	"r2, #0"		o						FaultARM	
+ 63c:	e5c32000 	strb	"r2, [r3]"		o						FaultARM	
+ 640:	e59f30a4 	ldr	"r3, [pc, #164]"									
+ 644:	e7943003 	ldr	"r3, [r4, r3]"									
+ 648:	e1d330d0 	ldrsb	"r3, [r3]"									
+ 64c:	e3530000 	cmp	"r3, #0"		o						FaultARM	
+ 650:	da000020 	ble	6d8 <verifyPIN+0xb8>		o						FaultARM	
+ 654:	e3a02004 	mov	"r2, #4"			o	o	o	o	o	-	"r2 = g_authenticated = 0, and skipping r2 = PIN_SIZE here -> always True"
+ 658:	e59f3090 	ldr	"r3, [pc, #144]"			o					Invalid access	"Skipping access to g_cardPin; offset skipped, base address used as-is -> access to 0x0 -> segfault"
+ 65c:	e7943003 	ldr	"r3, [r4, r3]"			o					Invalid access	Skipping access to g_cardPin; base address not added -> 0x40 used -> access to 0x40 -> segfault
+ 660:	e1a01003 	mov	"r1, r3"									"Skipping preparation of argument a2 = CardPin for byteArrayCompare. From initialize at line 784, expected value is 4. Accessing address 0x4 must succeed and be 0 -> segfault if not"
+ 664:	e59f3088 	ldr	"r3, [pc, #136]"			o					Invalid access	Skipping access to g_userPin; base address used as-is for global variable -> unmapped region access -> segfault
+ 668:	e7943003 	ldr	"r3, [r4, r3]"									
+ 66c:	e1a00003 	mov	"r0, r3"									
+ 670:	ebffffc8 	bl	598 <byteArrayCompare>		o						FaultARM	
+ 674:	e1a03000 	mov	"r3, r0"		o						FaultARM	
+ 678:	e3530001 	cmp	"r3, #1"		o						FaultARM	
+ 67c:	1a000009 	bne	6a8 <verifyPIN+0x88>		o	o	o	o	o	o	-	Skipping jump based on result of byteArrayCompare -> always True
+ 680:	e59f3064 	ldr	"r3, [pc, #100]"									
+ 684:	e7943003 	ldr	"r3, [r4, r3]"									
+ 688:	e3a02003 	mov	"r2, #3"		o						FaultARM	
+ 68c:	e5c32000 	strb	"r2, [r3]"		o						FaultARM	
+ 690:	e59f3050 	ldr	"r3, [pc, #80]"									
+ 694:	e7943003 	ldr	"r3, [r4, r3]"									
+ 698:	e3a02001 	mov	"r2, #1"		o						FaultARM	
+ 69c:	e5c32000 	strb	"r2, [r3]"		o						FaultARM	
+ 6a0:	e3a03001 	mov	"r3, #1"									
+ 6a4:	ea00000c 	b	6dc <verifyPIN+0xbc>									
+ 6a8:	e59f303c 	ldr	"r3, [pc, #60]"									
+ 6ac:	e7943003 	ldr	"r3, [r4, r3]"									
+ 6b0:	e1d330d0 	ldrsb	"r3, [r3]"									
+ 6b4:	e6ef3073 	uxtb	"r3, r3"									
+ 6b8:	e2433001 	sub	"r3, r3, #1"									
+ 6bc:	e6ef3073 	uxtb	"r3, r3"									
+ 6c0:	e6af2073 	sxtb	"r2, r3"									
+ 6c4:	e59f3020 	ldr	"r3, [pc, #32]"									
+ 6c8:	e7943003 	ldr	"r3, [r4, r3]"									
+ 6cc:	e5c32000 	strb	"r2, [r3]"									
+ 6d0:	e3a03000 	mov	"r3, #0"									
+ 6d4:	ea000000 	b	6dc <verifyPIN+0xbc>									
+ 6d8:	e3a03000 	mov	"r3, #0"									
+ 6dc:	e1a00003 	mov	"r0, r3"									
+ 6e0:	e8bd8830 	pop	"{r4, r5, fp, pc}"									
+ 6e4:	1984	andeq	"r1, r0, r4, lsl #19"									
+ 6e8:	44	andeq	"r0, r0, r4, asr #32"									
+ 6ec:	28	andeq	"r0, r0, r8, lsr #32"									
+ 6f0:	40	andeq	"r0, r0, r0, asr #32"									
+ 6f4:	30	andeq	"r0, r0, r0, lsr r0"									
+000006f8 <countermeasure>:												
+ 6f8:	e52db004 	push	{fp}	"@ (str fp, [sp, #-4]!)"								
+ 6fc:	e28db000 	add	"fp, sp, #0"									
+ 700:	e59f2020 	ldr	"r2, [pc, #32]"	@ 728 <countermeasure+0x30>								
+ 704:	e08f2002 	add	"r2, pc, r2"									
+ 708:	e59f301c 	ldr	"r3, [pc, #28]"	@ 72c <countermeasure+0x34>								
+ 70c:	e7923003 	ldr	"r3, [r2, r3]"									
+ 710:	e3a02001 	mov	"r2, #1"		o						FaultARM	
+ 714:	e5c32000 	strb	"r2, [r3]"		o						FaultARM	
+ 718:	e320f000 	nop	{0}									
+ 71c:	e28bd000 	add	"sp, fp, #0"									
+ 720:	e49db004 	pop	{fp}	"@ (ldr fp, [sp], #4)"								
+ 724:	e12fff1e 	bx	lr									
+ 728:	000018ac 	andeq	"r1, r0, ip, lsr #17"									
+ 72c:	38	andeq	"r0, r0, r8, lsr r0"									
+00000730 <initialize>:												
+ 730:	e52db004 	push	{fp}	"@ (str fp, [sp, #-4]!)"								
+ 734:	e28db000 	add	"fp, sp, #0"									
+ 738:	e24dd00c 	sub	"sp, sp, #12"									
+ 73c:	e59f30c4 	ldr	"r3, [pc, #196]"	@ 808 <initialize+0xd8>								
+ 740:	e08f3003 	add	"r3, pc, r3"									
+ 744:	e3a02000 	mov	"r2, #0"		o						FaultARM	
+ 748:	e5c32000 	strb	"r2, [r3]"	@ 80c <initialize+0xdc>	o						FaultARM	
+ 74c:	e59f30b8 	ldr	"r3, [pc, #184]"									
+ 750:	e08f3003 	add	"r3, pc, r3"									
+ 754:	e3a02003 	mov	"r2, #3"		o						FaultARM	
+ 758:	e5c32000 	strb	"r2, [r3]"	@ 810 <initialize+0xe0>	o						FaultARM	
+ 75c:	e59f30ac 	ldr	"r3, [pc, #172]"									
+ 760:	e08f3003 	add	"r3, pc, r3"									
+ 764:	e3a02000 	mov	"r2, #0"									
+ 768:	e5c32000 	strb	"r2, [r3]"		o						FaultARM	
+ 76c:	e3a03000 	mov	"r3, #0"		o	o	o	o	o	o	-	"Skipping 'mov 0' for I = 0. Since i = r3 = *g_countermeasure, almost always True."
+ 770:	e50b3008 	str	"r3, [fp, #-8]"		o		o	o		o	Initial state	"Skipping loop counter i = 0 in initialization g_cardPin. Depends on stack state. If [fp - 8] on stack is ≥ PIN_SIZE, loop does not run (possibly written by ELF loader). If g_cardPin is zero-initialized, then True."
+ 774:	ea00000c 	b	7ac <initialize+0x7c>									
+ 778:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 77c:	e6ef3073 	uxtb	"r3, r3"									
+ 780:	e2833001 	add	"r3, r3, #1"									
+ 784:	e6ef1073 	uxtb	"r1, r3"	@ 814 <initialize+0xe4>					o		Initial state	"Skipping r1 when g_cardPin = i + 1 (r1). Not used after main(); depends on ELF loader. In QEMU, address is loaded, so it doesn't match g_userPin."
+ 788:	e59f2084 	ldr	"r2, [pc, #132]"			o					Invalid access	Skipping access to g_cardPin via offset -> likely segfault.
+ 78c:	e08f2002 	add	"r2, pc, r2"			o					Invalid access	Skipping access to g_cardPin via base (pc) -> likely segfault.
+ 790:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 794:	e0823003 	add	"r3, r2, r3"			o					Invalid access	i[i] = i + 1 makes g_cardPin undefined; but i[i] access causes segfault.
+ 798:	e1a02001 	mov	"r2, r1"									
+ 79c:	e5c32000 	strb	"r2, [r3]"				o	o	o	o	Unexplainable	"Skipping g_cardPin[i] = i + 1. If g_cardPin is in initial state (zero-initialized), then True."
+ 7a0:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 7a4:	e2833001 	add	"r3, r3, #1"									
+ 7a8:	e50b3008 	str	"r3, [fp, #-8]"									
+ 7ac:	e51b3008 	ldr	"r3, [fp, #-8]"		o							
+ 7b0:	e3530003 	cmp	"r3, #3"		o	o					Initial state	"Skipping i < PIN_SIZE for g_cardPin. Depends on cmp, and since initialize() has no prior cmp, program dependent. (N = 1"
+ 7b4:	daffffef 	ble	778 <initialize+0x48>		o	o	o	o	o	o	-	Skipping g_cardPin initialization -> always True.
+ 7b8:	e3a03000 	mov	"r3, #0"		o							
+ 7bc:	e50b3008 	str	"r3, [fp, #-8]"		o							
+ 7c0:	ea000008 	b	7e8 <initialize+0xb8>	@ 818 <initialize+0xe8>								
+ 7c4:	e59f204c 	ldr	"r2, [pc, #76]"									
+ 7c8:	e08f2002 	add	"r2, pc, r2"									
+ 7cc:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 7d0:	e0823003 	add	"r3, r2, r3"									
+ 7d4:	e3a02000 	mov	"r2, #0"		o							
+ 7d8:	e5c32000 	strb	"r2, [r3]"		o							
+ 7dc:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 7e0:	e2833001 	add	"r3, r3, #1"									
+ 7e4:	e50b3008 	str	"r3, [fp, #-8]"									
+ 7e8:	e51b3008 	ldr	"r3, [fp, #-8]"									
+ 7ec:	e3530003 	cmp	"r3, #3"		o			o	o	o	Revert	"Ignoring g_userPin size check. g_userPin and g_cardPin are adjacent, so g_cardPin may overwrite. Applies in this case, but might fail in actual user-input scenarios. Revert interrupts the process mid-way and avoids infinite loop."
+ 7f0:	dafffff3 	ble	7c4 <initialize+0x94>		o							
+ 7f4:	e320f000 	nop	{0}									
+ 7f8:	e320f000 	nop	{0}									
+ 7fc:	e28bd000 	add	"sp, fp, #0"	"@ (ldr fp, [sp], #4)"								
+ 800:	e49db004 	pop	{fp}									
+ 804:	e12fff1e 	bx	lr					o	o	o	"{fisimulation: Unexplainable, chaos duck: Success condition}"	"Skipping bx lr. super_secret lies below; following data interpreted as conditional instructions -> reaches secret. Damage unnoticeable from standard output. Undetectable by fault-injection-simulation likely due to strange behavior, not tool limitation."
+ 808:	1904	andeq	"r1, r0, r4, lsl #18"									
+ 80c:	000018f5 	strdeq	"r1, [r0], -r5"									
+ 810:	18000000	andeq	"r1, r0, r6, ror #17"									
+ 814:	000018c0 	andeq	"r1, r0, r0, asr #17"									
+ 818:	1880	andeq	"r1, r0, r0, lsl #17"									
+0000081c <super_secret_function>:												
+ 81c:	e52db004 	push	{fp}	"@ (str fp, [sp, #-4]!)"								
+ 820:	e28db000 	add	"fp, sp, #0"									
+ 824:	e320f000 	nop	{0}									
+ 828:	e28bd000 	add	"sp, fp, #0"									
+ 82c:	e49db004 	pop	{fp}	"@ (ldr fp, [sp], #4)"								
+ 830:	e12fff1e 	bx	lr									
+00000834 <main>:												
+ 834:	e92d4830 	push	"{r4, r5, fp, lr}"									
+ 838:	e28db00c 	add	"fp, sp, #12"									
+ 83c:	e59f4064 	ldr	"r4, [pc, #100]"									
+ 840:	e08f4004 	add	"r4, pc, r4"									
+ 844:	ebffffb9 	bl	730 <initialize>	@ 8a8 <main+0x74>								
+ 848:	ebffff74 	bl	620 <verifyPIN>									

@@ -1,0 +1,142 @@
+{
+    "binary filename" : "eval/bins/verifypin_0_arm_PIE_gdb.bin",
+    "cpu"             : "MAX",
+    "unicorn arch"    : "arm",
+    "unicorn mode"    : "LITTLE ENDIAN",
+    "capstone arch"   : "arm",
+    "capstone mode"   : "LITTLE_ENDIAN",
+    "memory address"  : "0x00400000",
+    "memory size"     : "0x00003000",
+    "other memory"    :
+    [
+    ],
+    "stack address"   : "0x40000000",
+    "stack size"      :   "0x800000",
+    "code offset"     : "0x00000000",
+    "code start"      : "0x00000834",
+    "code end"        : "0x000008a4",
+    "fault start"     : "0x00000834",
+    "fault end"       : "0x0000084c",
+    "hard stops"      :
+    [
+        {
+            "location": "fixed address",
+            "address" : "0x00400828"
+        }
+    ],
+    "set registers" :
+    [
+    ],
+    "outputs"       : 
+    [
+        {   
+            "location"      : "fixed address",
+            "address"       : "0x407ffa85",
+            "register"      : "",
+            "length"        : "16",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "fixed address",
+            "address"       : "0x401fbc",
+            "register"      : "",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "fixed address",
+            "address"       : "0x407ff9b8",
+            "register"      : "",
+            "length"        : "16",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "fixed address",
+            "address"       : "0x407ff994",
+            "register"      : "",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "pc",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "r0",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "r1",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "r2",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "r3",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "r4",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "r7",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "sp",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "fp",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "register",
+            "address"       : "",
+            "register"      : "cpsr",
+            "length"        : "4",
+            "offset"        : ""
+        }
+    ],
+    "skips":
+    [
+        { 
+            "address"       : "0x880",
+            "bytes"         : "0x4"
+        }        
+    ],
+    "timeout":"0",
+    "filter results": "no",
+    "set memory"    :
+    []
+}

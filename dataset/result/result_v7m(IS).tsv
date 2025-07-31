@@ -1,0 +1,185 @@
+IP	code	opcode	oprand	comment	FaultARM	fault-injection-simulation	ARCHIE	ARMORY	FaultFinder (rehosting)	FaultFinder	Grand Truth	Type	Reason
+08000000 <vector_table>:													
+ 8000000:	20002000	andcs	"r2, r0, r0"										
+ 8000004:	080001a9 	stmdaeq	"r0, {r0, r3, r5, r7, r8}"										
+08000040 <byteArrayCompare>:													
+ 8000040:	b480      	push	{r7}										
+ 8000042:	b087      	sub	"sp, #28"										
+ 8000044:	af00      	add	"r7, sp, #0"										
+ 8000046:	60f8      	str	"r0, [r7, #12] ; a1 (g_userPin)"			o						Unexplainable	byteArrayCompare: Skipping local store of argument g_userPin. It is unlikely that it matches g_cardPin in this case.
+ 8000048:	60b9      	str	"r1, [r7, #8] ; a2 (g_cardPin)"			o						Initial state	"byteArrayCompare: Skipping local store of argument g_cardPin. If the stack is zero-initialized, g_cardPin would not be set and 0x0 would be referenced; if that address holds 0, it matches g_userPin and may reach the secret. However, QEMU execution shows initial_sp_value = 0x20002000, resulting in a mismatch."
+ 800004a:	4613	mov	"r3, r2"										
+ 800004c:	71fb      	strb	"r3, [r7, #7] ; a3 (PIN_SIZE)"			o	o	o	o	o	o	-	"Skipping store of PIN_SIZE. Depending on the stack state, it is True if zero-initialized."
+ 800004e:	2300	movs	"r3, #0"			o	o	o	o	o	o	-	"At i = 0, mov 0 is skipped. Since R3 = PIN_SIZE, if (PIN_SIZE < PIN_SIZE) is False."
+ 8000050:	617b      	str	"r3, [r7, #20] ; i = 0"			o						Unexplainable	"byteArrayCompare: Skipping i = 0. Depending on the stack state, if PIN_SIZE == 0, the loop is not entered."
+ 8000052:	e00e      	b.n	8000072 <byteArrayCompare+0x32>										
+ -- a1 vs. a2													
+ 8000054:	697b      	ldr	"r3, [r7, #20] ; i"										
+ 8000056:	68fa      	ldr	"r2, [r7, #12] ; a1"			o						Unexplainable	"In a1 vs. a2, skipping load of a1. R2 represents size, so it becomes size[i]. It is unlikely that this value matches a2 (cardPin)."
+ 8000058:	4413	add	"r3, r2"			o						Unexplainable	"In a1 vs. a2, skipping calculation of a1[i]. It becomes a1[0] vs. a2[i], but since a1 is userPin, it is False."
+ 800005a:	781a      	ldrb	"r2, [r3, #0] ; r2 = a1[i]"			o						Unexplainable	"In a1 vs. a2, skipping load of i from a2. r3 = *(a2 + a1)[i], resulting in abnormal comparison."
+ 800005c:	697b      	ldr	"r3, [r7, #20] ; i"				o		o		o	Initial state	"r3 remains g_userPin (0x20000004). Then g_cardPin (0x20000008) is added, accessing 0x4000000c. Since this is the Timer region, QEMU returns 0, so it matches g_userPin and Attack Possible."
+ 800005e:	68b9      	ldr	"r1, [r7, #8]"										
+ 8000060:	440b      	add	"r3, r1"			o						Initial state	"In a1 vs. a2, skipping calculation of a2[i]. Since a1[i] is compared with [0] = 0x20002000 (initial SP), Attack Failed."
+ 8000062:	781b      	ldrb	"r3, [r3, #0] ; r3 = a2[i]"										
+ 8000064:	429a      	cmp	"r2, r3"										
+ 8000066:	d001      	beq.n	800006c <byteArrayCompare+0x2c>										
+ 8000068:	2300	movs	"r3, #0"			o	o	o	o	o	o	-	"Skipping mov 0 in exit with 0. At this time, r3 = a2[i] = 1 or 2 or 3 or 4, so depending on the condition, but in this program it is always True."
+ 800006a:	e007      	b.n	800007c <byteArrayCompare+0x3c>  ; exit with 0			o	o	o	o	o	o	-	"Skipping jump in exit with 0. That is, if permanent, the check proceeds to the end and always returns 1."
+ -- cont.													
+ 800006c:	697b      	ldr	"r3, [r7, #20]"										
+ 800006e:	3301	adds	"r3, #1"										
+ 8000070:	617b      	str	"r3, [r7, #20]"										
+ --													
+ 8000072:	79fb      	ldrb	"r3, [r7, #7] ; PIN_SIZE"			o	o	o	o	o	o	-	"Skipping load of PIN_SIZE. On first entry, if (i < i) is always False. Therefore, the loop does not run and exits with 1."
+ 8000074:	697a      	ldr	"r2, [r7, #20] ; i"		o	o	o	o	o	o	o	-	"Skipping load of i. On first entry, if (PIN_SIZE < PIN_SIZE) is always False. Therefore, the loop does not run and exits with 1."
+ 8000076:	429a      	cmp	"r2, r3 ; i < PIN_SIZE"		o	o	o	o	o	o	o	-	"Skipping cmp. On first entry, depending on verifypin(): since g_ptc - 0 is always positive, it is always True. Therefore, no branch in blt and loop exits with 1."
+ 8000078:	dbec      	blt.n	8000054 <byteArrayCompare+0x14>		o	o	o	o	o	o	o	-	Skipping jump to a1 vs. a2 logic. Always exits with 1.
+ 800007a:	2301	movs	"r3, #1"										
+ 800007c:	4618	mov	"r0, r3"										
+ 800007e:	371c      	adds	"r7, #28"										
+ 8000080:	46bd      	mov	"sp, r7"										
+ 8000082:	bc80      	pop	{r7}										
+ 8000084:	4770	bx	lr										
+08000086 <verifyPIN>:													
+ 8000086:	b580      	push	"{r7, lr}"										
+ 8000088:	af00      	add	"r7, sp, #0"										
+ 800008a:	4b13      	ldr	"r3, [pc, #76]"	@ (80000d8 <verifyPIN+0x52>)									
+ 800008c:	2200	movs	"r2, #0"										
+ 800008e:	701a      	strb	"r2, [r3, #0] ; g_authenticated = 0"										
+ 8000090:	4b12      	ldr	"r3, [pc, #72]"	@ (80000dc <verifyPIN+0x56>)									
+ 8000092:	f993 3000 	ldrsb.w	"r3, [r3] ; g_ptc"										
+ 8000096:	2b00      	cmp	"r3, #0"		o								
+ 8000098:	dd1a      	ble.n	80000d0 <verifyPIN+0x4a>		o								
+ 800009a:	2204	movs	"r2, #4 ; PIN_SIZE"			o	o	o	o	o	o	-	"Skipping argument PIN_SIZE. Since r2 = 0 (g_authenticated), always True."
+ 800009c:	4910	ldr	"r1, [pc, #64]"	@ (80000e0 <verifyPIN+0x5a>) ; g_cardPin		o						Initial state	"verifyPIN: Skipping assignment of r1 for g_cardPin passed to byteArrayCompare. r1 is the last value of ++i used during initialize() for g_cardPin setup. That is, r1 = 4. Although initial PC = 0x080001a9 is stored, it is misinterpreted as unrecognized."
+ 800009e:	4811	ldr	"r0, [pc, #68]"	@ (80000e4 <verifyPIN+0x5e>) ; g_userPin									
+ 80000a0:	f7ff ffce 	bl	8000040 <byteArrayCompare>		o								
+ 80000a4:	4603	mov	"r3, r0"		o								
+ 80000a6:	2b01      	cmp	"r3, #1"		o								
+ 80000a8:	d107      	bne.n	80000ba <verifyPIN+0x34>		o	o	o	o	o	o	o	-	"Ignoring result of byteArrayCompare. Skipping jump to failure logic, so always True."
+ 80000aa:	4b0c      	ldr	"r3, [pc, #48]"	@ (80000dc <verifyPIN+0x56>)									
+ 80000ac:	2203	movs	"r2, #3"										
+ 80000ae:	701a      	strb	"r2, [r3, #0]"										
+ 80000b0:	4b09      	ldr	"r3, [pc, #36]"	@ (80000d8 <verifyPIN+0x52>)									
+ 80000b2:	2201	movs	"r2, #1"										
+ 80000b4:	701a      	strb	"r2, [r3, #0]"										
+ 80000b6:	2301	movs	"r3, #1"										
+ 80000b8:	e00b      	b.n	80000d2 <verifyPIN+0x4c>										
+ 80000ba:	4b08      	ldr	"r3, [pc, #32]"	@ (80000dc <verifyPIN+0x56>)									
+ 80000bc:	f993 3000 	ldrsb.w	"r3, [r3]"										
+ 80000c0:	b2db      	uxtb	"r3, r3"										
+ 80000c2:	3b01      	subs	"r3, #1"		o								
+ 80000c4:	b2db      	uxtb	"r3, r3"										
+ 80000c6:	b25a      	sxtb	"r2, r3"										
+ 80000c8:	4b04      	ldr	"r3, [pc, #16]"	@ (80000dc <verifyPIN+0x56>)									
+ 80000ca:	701a      	strb	"r2, [r3, #0]"										
+ 80000cc:	2300	movs	"r3, #0"										
+ 80000ce:	e000      	b.n	80000d2 <verifyPIN+0x4c>										
+ --													
+ 80000d0:	2300	movs	"r3, #0"										
+ 80000d2:	4618	mov	"r0, r3"										
+ 80000d4:	bd80      	pop	"{r7, pc}"										
+ 80000d6:	bf00      	nop											
+ 80000d8:	20000000	andcs	"r0, r0, r0"										
+ 80000dc:	20000001	andcs	"r0, r0, r1"										
+ 80000e0:	20000008	andcs	"r0, r0, r8"										
+ 80000e4:	20000004	andcs	"r0, r0, r4"										
+080000e8 <countermeasure>:													
+ 80000e8:	b480      	push	{r7}										
+ 80000ea:	af00      	add	"r7, sp, #0"										
+ 80000ec:	4b03      	ldr	"r3, [pc, #12]"	@ (80000fc <countermeasure+0x14>)									
+ 80000ee:	2201	movs	"r2, #1"										
+ 80000f0:	701a      	strb	"r2, [r3, #0]"										
+ 80000f2:	bf00      	nop											
+ 80000f4:	46bd      	mov	"sp, r7"										
+ 80000f6:	bc80      	pop	{r7}										
+ 80000f8:	4770	bx	lr										
+ 80000fa:	bf00      	nop											
+ 80000fc:	20000002	andcs	"r0, r0, r2"										
+08000100 <initialize>:													
+ 8000100:	b480      	push	{r7}										
+ 8000102:	b083      	sub	"sp, #12"										
+ 8000104:	af00      	add	"r7, sp, #0"										
+ 8000106:	4b17      	ldr	"r3, [pc, #92]"	@ (8000164 <initialize+0x64>) ; g_authenticated									
+ 8000108:	2200	movs	"r2, #0"										
+ 800010a:	701a      	strb	"r2, [r3, #0]"										
+ 800010c:	4b16      	ldr	"r3, [pc, #88]"	@ (8000168 <initialize+0x68>) ; g_ptc									
+ 800010e:	2203	movs	"r2, #3"										
+ 8000110:	701a      	strb	"r2, [r3, #0]"										
+ 8000112:	4b16      	ldr	"r3, [pc, #88]"	@ (800016c <initialize+0x6c>) ; g_countermeasure									
+ 8000114:	2200	movs	"r2, #0"										
+ 8000116:	701a      	strb	"r2, [r3, #0]"										
+ 8000118:	2300	movs	"r3, #0"			o	o		o	o	o	Initial state	"Skipping i = 0 in initialize. i = *g_countermeasure and I < PIN_SIZE is almost always False. Since g_cardPin remains in initial state, it is True if zero-initialized. On ARMORY, g_cardPin might not be zero or &g_counter may differ."
+ 800011a:	607b      	str	"r3, [r7, #4] ; i = 0"										
+ 800011c:	e00b      	b.n	8000136 <initialize+0x36>										
+ -- g_cardPin = 1234													
+ 800011e:	687b      	ldr	"r3, [r7, #4]"										
+ 8000120:	b2db      	uxtb	"r3, r3"										
+ 8000122:	3301	adds	"r3, #1"										
+ 8000124:	b2d9      	uxtb	"r1, r3 ; ++i"			o	o	o	o	o	o	-	"Skipping r1 = i + 1 in for loop of g_cardPin. r1 is unused in Initialize(), and also in Reset_handler to main, so likely undefined but assumed to be r1 = 0. In this case, g_cardPin = 0000, so compare is always True."
+ 8000126:	4a12      	ldr	"r2, [pc, #72]"	@ (8000170 <initialize+0x70>) ; g_cardPin		o	o		o			Write attribute	"Skipping load of g_cardPin in initialize. Initially, r2 = 0, and writing i[0] = 0. Normally not allowed, but QEMU assumes write is possible due to MPU being disabled."
+ 8000128:	687b      	ldr	"r3, [r7, #4] ; i"										
+ 800012a:	4413	add	"r3, r2 ; g_cardPin[i]"			o	o		o			Write attribute	"Skipping calculation of g_cardPin[i]. Like in 8000126, writing to i[0] occurs. Normally not allowed, but QEMU assumes write is possible due to MPU being disabled."
+ 800012c:	460a      	mov	"r2, r1 ; r2 = ++ i = i + 1"										
+ 800012e:	701a      	strb	"r2, [r3, #0] ; g_cardPin[i] = i + 1"			o	o		o	o	o	Initial state	"Skipping g_cardPin[i] = i + 1. Since g_cardPin remains in initial state, True if zero-initialized."
+ 8000130:	687b      	ldr	"r3, [r7, #4]"										
+ 8000132:	3301	adds	"r3, #1"										
+ 8000134:	607b      	str	"r3, [r7, #4]"										
+ -- g_userPin = 0000													
+ 8000136:	687b      	ldr	"r3, [r7, #4]"		o								
+ 8000138:	2b03      	cmp	"r3, #3"		o								
+ 800013a:	ddf0      	ble.n	800011e <initialize+0x1e>		o	o	o		o	o	o	Initial state	"Skipping jump to g_cardPin initialization logic. Since g_cardPin remains in initial state, True if zero-initialized."
+ 800013c:	2300	movs	"r3, #0"										
+ 800013e:	607b      	str	"r3, [r7, #4]"										
+ 8000140:	e007      	b.n	8000152 <initialize+0x52>										
+ 8000142:	4a0c      	ldr	"r2, [pc, #48]"	@ (8000174 <initialize+0x74>)									
+ 8000144:	687b      	ldr	"r3, [r7, #4]"										
+ 8000146:	4413	add	"r3, r2"										
+ 8000148:	2200	movs	"r2, #0"										
+ 800014a:	701a      	strb	"r2, [r3, #0]"										
+ 800014c:	687b      	ldr	"r3, [r7, #4]"										
+ 800014e:	3301	adds	"r3, #1"										
+ 8000150:	607b      	str	"r3, [r7, #4]"										
+ 8000152:	687b      	ldr	"r3, [r7, #4]"		o								
+ 8000154:	2b03      	cmp	"r3, #3"		o								
+ 8000156:	ddf4      	ble.n	8000142 <initialize+0x42>		o								
+ 8000158:	bf00      	nop											
+ 800015a:	bf00      	nop											
+ 800015c:	370c      	adds	"r7, #12"										
+ 800015e:	46bd      	mov	"sp, r7"										
+ 8000160:	bc80      	pop	{r7}										
+ 8000162:	4770	bx	lr			o	o	o	o	o	o	-	"Skipping bx lr. After that, the address to a global variable is stored, which appears as an andcs instruction and is harmless. Below that is super_secret, so it is reached."
+ 8000164:	20000000	andcs	"r0, r0, r0"										
+ 8000168:	20000001	andcs	"r0, r0, r1"										
+ 800016c:	20000002	andcs	"r0, r0, r2"										
+ 8000170:	20000008	andcs	"r0, r0, r8"										
+ 8000174:	20000004	andcs	"r0, r0, r4"										
+08000178 <super_secret_function>:													
+ 8000178:	b480      	push	{r7}										
+ 800017a:	af00      	add	"r7, sp, #0"										
+ 800017c:	bf00      	nop											
+ 800017e:	46bd      	mov	"sp, r7"										
+ 8000180:	bc80      	pop	{r7}										
+ 8000182:	4770	bx	lr										
+08000184 <main>:													
+ 8000184:	b580      	push	"{r7, lr}"										
+ 8000186:	af00      	add	"r7, sp, #0"										
+ 8000188:	f7ff ffba 	bl	8000100 <initialize>										
+ 800018c:	f7ff ff7b 	bl	8000086 <verifyPIN>										
+ 8000190:	4b04      	ldr	"r3, [pc, #16]"	@ (80001a4 <main+0x20>)									
+ 8000192:	781b      	ldrb	"r3, [r3, #0]"										
+ 8000194:	2b00      	cmp	"r3, #0"										
+ 8000196:	d001      	beq.n	800019c <main+0x18>										
+ 8000198:	f7ff ffee 	bl	8000178 <super_secret_function>										
+ 800019c:	2300	movs	"r3, #0"										
+ 800019e:	4618	mov	"r0, r3"										
+ 80001a0:	bd80      	pop	"{r7, pc}"										
+ 80001a2:	bf00      	nop											
+ 80001a4:	20000000	andcs	"r0, r0, r0"										
+080001a8 <reset_handler>:													
+ 80001a8:	b580      	push	"{r7, lr}"										
+ 80001aa:	af00      	add	"r7, sp, #0"										
+ 80001ac:	f7ff ffea 	bl	8000184 <main>										
+ 80001b0:	bf00      	nop											
+ 80001b2:	e7fd      	b.n	80001b0 <reset_handler+0x8>										

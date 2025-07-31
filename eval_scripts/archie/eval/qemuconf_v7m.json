@@ -1,0 +1,8 @@
+{
+	"qemu" : "../qemu/build/debug/arm-softmmu/qemu-system-arm",
+	"bios" : "",
+	"kernel" : "../../../dataset/binary/verifypin_0_arm_v7m.elf",
+	"plugin" : "../faultplugin/libfaultplugin.so",
+	"machine" : "stm32vldiscovery",
+	"additional_qemu_args" : ""
+}

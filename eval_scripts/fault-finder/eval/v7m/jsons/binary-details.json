@@ -1,0 +1,206 @@
+{
+    "binary filename" : "eval/bins/verifypin_0_arm_v7m.bin",
+    "cpu"             : "MAX",
+    "unicorn arch"    : "arm",
+    "unicorn mode"    : "THUMB",
+    "capstone arch"   : "arm",
+    "capstone mode"   : "THUMB",
+    "memory address"  : "0x08000000",
+    "memory size"     : "0x00020000",
+    "other memory"    :
+    [
+        { "address": "0x00000000", "size": "0x20000" },
+        { "address": "0x40000000", "size": "0x0c00" },
+        { "address": "0x40001000", "size": "0x0400" },
+        { "address": "0x40002800", "size": "0x0c00" },
+        { "address": "0x40003800", "size": "0x0400" },
+        { "address": "0x40004400", "size": "0x0800" },
+        { "address": "0x40005400", "size": "0x0800" },
+        { "address": "0x40006c00", "size": "0x0c00" },
+        { "address": "0x40007800", "size": "0x0400" },
+        { "address": "0x40010000", "size": "0x1c00" },
+        { "address": "0x40012400", "size": "0x0400" },
+        { "address": "0x40012c00", "size": "0x0800" },
+        { "address": "0x40013800", "size": "0x0400" },
+        { "address": "0x40014000", "size": "0x0c00" },
+        { "address": "0x40020000", "size": "0x0400" },
+        { "address": "0x40021000", "size": "0x0400" },
+        { "address": "0x40022000", "size": "0x0400" },
+        { "address": "0x40023000", "size": "0x0400" },
+        { "address": "0x22000000", "size": "0x40000" },
+        { "address": "0x42000000", "size": "0x18000" },
+        { "address": "0x42020000", "size": "0x08000" },
+        { "address": "0x42050000", "size": "0x18000" },
+        { "address": "0x42070000", "size": "0x08000" },
+        { "address": "0x42088000", "size": "0x10000" },
+        { "address": "0x420A8000", "size": "0x10000" },
+        { "address": "0x420D8000", "size": "0x18000" },
+        { "address": "0x420F0000", "size": "0x08000" },
+        { "address": "0x42200000", "size": "0x38000" },
+        { "address": "0x42248000", "size": "0x08000" },
+        { "address": "0x42258000", "size": "0x10000" },
+        { "address": "0x42270000", "size": "0x08000" },
+        { "address": "0x42280000", "size": "0x18000" },
+        { "address": "0x42400000", "size": "0x08000" },
+        { "address": "0x42420000", "size": "0x08000" },
+        { "address": "0x42440000", "size": "0x08000" },
+        { "address": "0x42460000", "size": "0x08000" }
+    ],
+    "prohibited memory": [
+        { "address": "0x00000000", "size": "0x20000",  "type": "write" },
+        { "address": "0x08000000", "size": "0x20000",  "type": "write" },
+        { "address": "0x40000000", "size": "0x23400",  "type": "execute" },
+        { "address": "0x42000000", "size": "0x468000", "type": "execute" }
+    ],
+    "stack address" : "0x20000000",
+    "stack size"    :     "0x2000",
+    "code offset"   : "0x00000000",
+    "code start"    : "0x000001a9",
+    "code end"      : "0x000001b2",
+    "fault start"   : "0x000001a8",
+    "fault end"     : "0x00000190",
+    "hard stops"    :
+    [
+        {
+            "location": "fixed address",
+            "address" : "0x0800017c"
+        }
+    ],
+    "set memory"    : [
+        {
+            "format"     : "hex",
+            "byte array" : "00200020a9010008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080b487b000aff860b9601346fb7100237b610ee07b69fa6813441a787b69b9680b441b789a4201d0002307e07b6901337b61fb797a699a42ecdb012318461c37bd4680bc704780b500af134b00221a70124b93f90030002b1add042210491148fff7ceff0346012b07d10c4b03221a70094b01221a7001230be0084b93f90030dbb2013bdbb25ab2044b1a70002300e00023184680bd00bf0000002001000020080000200400002080b400af034b01221a7000bfbd4680bc704700bf0200002080b483b000af174b00221a70164b03221a70164b00221a7000237b600be07b68dbb20133d9b2124a7b6813440a461a707b6801337b607b68032bf0dd00237b6007e00c4a7b68134400221a707b6801337b607b68032bf4dd00bf00bf0c37bd4680bc7047000000200100002002000020080000200400002080b400af00bfbd4680bc704780b500affff7bafffff77bff044b1b78002b01d0fff7eeff0023184680bd00bf0000002080b500affff7eaff00bffde780b400af074b1b78012b05d0064b1b78012b01d1012300e00023dbb21846bd4680bc7047020000200000002080b400af084b1b78012b06d0074b93f90030022b01dd012300e00023dbb21846bd4680bc704700bf0200002001000020",
+            "type"       : "address",
+            "address"    : "0x0"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "0a000000000000000700000000000000000000000000000002",
+            "type"       : "address",
+            "address"    : "0x40003808"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "c0",
+            "type"       : "address",
+            "address"    : "0x40004400"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "c0",
+            "type"       : "address",
+            "address"    : "0x40004800"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "0a000000000000000700000000000000000000000000000002",
+            "type"       : "address",
+            "address"    : "0x40013008"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "c0",
+            "type"       : "address",
+            "address"    : "0x40013800"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "010000000000000001",
+            "type"       : "address",
+            "address"    : "0x42070104"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "010000000100000001",
+            "type"       : "address",
+            "address"    : "0x42070200"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "01",
+            "type"       : "address",
+            "address"    : "0x42070404"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "0100000001",
+            "type"       : "address",
+            "address"    : "0x42088018"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "0100000001",
+            "type"       : "address",
+            "address"    : "0x42090018"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "010000000000000001",
+            "type"       : "address",
+            "address"    : "0x42260104"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "010000000100000001",
+            "type"       : "address",
+            "address"    : "0x42260200"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "01",
+            "type"       : "address",
+            "address"    : "0x42260404"
+        },
+        {
+            "format"     : "hex",
+            "byte array" : "0100000001",
+            "type"       : "address",
+            "address"    : "0x42270018"
+        }
+    ],
+    "set registers" :
+    [
+        {
+            "reg": "lr",
+            "reg value": "0xffffffff"
+        },
+        {
+            "reg": "xpsr",
+            "reg value": "0x41000000"
+        }
+    ],
+    "outputs"       : 
+    [
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "pc",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "sp",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "address in register",
+            "address"       : "",
+            "register"      : "r7",
+            "length"        : "4",
+            "offset"        : ""
+        },
+        {   
+            "location"      : "fixed address",
+            "address"       : "0x20001fc7",
+            "register"      : "",
+            "length"        : "4",
+            "offset"        : ""
+        }
+    ],
+    "skips": [],
+    "timeout":"0",
+    "filter results": "no"
+}

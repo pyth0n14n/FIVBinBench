@@ -1,0 +1,142 @@
+IP	code	opcode	oprand	comment	ChaosDuck	FaultFinder (rehosting)	FaultFinder	FaultInjectionSimulator	FaultARM	Grand Truth	Type	Reason
+0000000000001149 <countermeasure>:												
+    1149:	f3 0f 1e fa          	endbr64										
+    114d:	55	push	%rbp									
+    114e:	48 89 e5             	mov	"%rsp,%rbp"									
+    1151:	c6 05 bb 2e 00 00 01 	movb	"$0x1,0x2ebb(%rip) "	 # 4013 <g_countermeasure>								
+    1158:	90	nop										
+    1159:	5d                   	pop	%rbp									
+    115a:	c3                   	ret										
+000000000000115b <initialize>:												
+    115b:	f3 0f 1e fa          	endbr64										
+    115f:	55	push	%rbp									
+    1160:	48 89 e5             	mov	"%rsp,%rbp"									
+    1163:	c6 05 a7 2e 00 00 00 	movb	"$0x0,0x2ea7(%rip)"	        # 4011 <g_authenticated>								
+    116a:	c6 05 a1 2e 00 00 03 	movb	"$0x3,0x2ea1(%rip)"	        # 4012 <g_ptc>								
+    1171:	c6 05 9b 2e 00 00 00 	movb	"$0x0,0x2e9b(%rip)"	        # 4013 <g_countermeasure>								
+    1178:	c7 45 fc 00 00 00 00 	movl	"$0x0,-0x4(%rbp)"		o	o	o		o	o	Initial state	"Skipping i = 0 in init. Depends on stack state; if ≥ PIN_SIZE and g_cardPin is zero-initialized, secret is reached."
+    117f:	eb 19                	jmp	119a <initialize+0x3f>									
+    1181:	8b 45 fc             	mov	"-0x4(%rbp),%eax"									
+    1184:	8d 48 01             	lea	"0x1(%rax),%ecx"					o			Initial state	"Skipping ecx = i + 1 in init. Traced back to _start, xor %ecx, %ecx puts 0. Later modified in __libc_start_main, which is library-dependent. Currently, ecx holds non-zero."
+    1187:	8b 45 fc             	mov	"-0x4(%rbp),%eax"									
+    118a:	48 98                	cltq										
+    118c:	48 8d 15 85 2e 00 00 	lea	"0x2e85(%rip),%rdx"	        # 4018 <g_cardPin>	o	o	o	o		o	FaultARM	"Skipping load of g_card_Pin. Traced back to <_start>, %rdx keeps initial value = pointer to envp (environment variables). Valid access -> no segfault -> g_cardPin remains in initial state."
+    1193:	88 0c 10             	mov	"%cl,(%rax,%rdx,1)"		o	o	o	o		o	FaultARM	Skipping assignment of i + 1 to g_card_Pin -> Attack Possible under Permanent.
+    1196:	83 45 fc 01          	addl	"$0x1,-0x4(%rbp)"									
+    119a:	83 7d fc 03          	cmpl	"$0x3,-0x4(%rbp)"								Initial state	Check i < 4 before g_cardPin assignment in init. Jle means ZF
+    119e:	7e e1                	jle	1181 <initialize+0x26>		o	o	o	o		o	FaultARM	Skipping i < PIN_SIZE for g_cardPin. Exits on first pass -> exit with 1.
+    11a0:	c7 45 fc 00 00 00 00 	movl	"$0x0,-0x4(%rbp)"						o			
+    11a7:	eb 14                	jmp	11bd <initialize+0x62>									
+    11a9:	8b 45 fc             	mov	"-0x4(%rbp),%eax"									
+    11ac:	48 98                	cltq										
+    11ae:	48 8d 15 5f 2e 00 00 	lea	"0x2e5f(%rip),%rdx  "	      # 4014 <g_userPin>	o	o	o	o		o	FaultARM	"Skipping load of g_userPin. edx contains prior g_cardPin, which is zero-initialized. If g_userPin is also zero-initialized -> secret reachable."
+    11b5:	c6 04 10 00          	movb	"$0x0,(%rax,%rdx,1)"									
+    11b9:	83 45 fc 01          	addl	"$0x1,-0x4(%rbp)"									
+    11bd:	83 7d fc 03          	cmpl	"$0x3,-0x4(%rbp)"						o			FaultARM
+    11c1:	7e e6                	jle	11a9 <initialize+0x4e>									
+    11c3:	90	nop										
+    11c4:	90	nop										
+    11c5:	5d                   	pop	%rbp									
+    11c6:	c3                   	ret										
+00000000000011c7 <oracle>:												
+    11c7:	f3 0f 1e fa          	endbr64										
+    11cb:	55	push	%rbp									
+    11cc:	48 89 e5             	mov	"%rsp,%rbp"									
+    11cf:	0f b6 05 3d 2e 00 00 	movzbl	"0x2e3d(%rip),%eax"	        # 4013 <g_countermeasure>								
+    11d6:	3c 01                	cmp	"$0x1,%al"									
+    11d8:	74 12                	je	11ec <oracle+0x25>						o			FaultARM
+    11da:	0f b6 05 30 2e 00 00 	movzbl	"0x2e30(%rip),%eax"	        # 4011 <g_authenticated>								
+    11e1:	3c 01                	cmp	"$0x1,%al"									
+    11e3:	75 07                	jne	11ec <oracle+0x25>									
+    11e5:	b8 01 00 00 00       	mov	"$0x1,%eax"									
+    11ea:	eb 05                	jmp	11f1 <oracle+0x2a>									
+    11ec:	b8 00 00 00 00       	mov	"$0x0,%eax"									
+    11f1:	5d                   	pop	%rbp									
+    11f2:	c3                   	ret										
+00000000000011f3 <oracle_ptc>:												
+    11f3:	f3 0f 1e fa          	endbr64										
+    11f7:	55	push	%rbp									
+    11f8:	48 89 e5             	mov	"%rsp,%rbp"									
+    11fb:	0f b6 05 11 2e 00 00 	movzbl	"0x2e11(%rip),%eax"	        # 4013 <g_countermeasure>								
+    1202:	3c 01                	cmp	"$0x1,%al"									
+    1204:	74 12                	je	1218 <oracle_ptc+0x25>									
+    1206:	0f b6 05 05 2e 00 00 	movzbl	"0x2e05(%rip),%eax "	       # 4012 <g_ptc>								
+    120d:	3c 02                	cmp	"$0x2,%al"									
+    120f:	7e 07                	jle	1218 <oracle_ptc+0x25>									
+    1211:	b8 01 00 00 00       	mov	"$0x1,%eax"									
+    1216:	eb 05                	jmp	121d <oracle_ptc+0x2a>									
+    1218:	b8 00 00 00 00       	mov	"$0x0,%eax"									
+    121d:	5d                   	pop	%rbp									
+    121e:	c3                   	ret										
+000000000000121f <byteArrayCompare>:												
+    121f:	f3 0f 1e fa          	endbr64										
+    1223:	55	push	%rbp									
+    1224:	48 89 e5             	mov	"%rsp,%rbp"									
+    1227:	48 89 7d e8          	mov	"%rdi,-0x18(%rbp)"									
+    122b:	48 89 75 e0          	mov	"%rsi,-0x20(%rbp)"									
+    122f:	89 d0                	mov	"%edx,%eax"									
+    1231:	88 45 dc             	mov	"%al,-0x24(%rbp)"		o	o	o	o		o	FaultARM	Skipping allocation for argument size in byteArrayCompare. If stack is zero-initialized -> Attack Possible.
+    1234:	c7 45 fc 00 00 00 00 	movl	"$0x0,-0x4(%rbp)"						o			FaultARM
+    123b:	eb 2f                	jmp	126c <byteArrayCompare+0x4d>									
+    123d:	8b 45 fc             	mov	"-0x4(%rbp),%eax"									
+    1240:	48 63 d0             	movslq	"%eax,%rdx"									
+    1243:	48 8b 45 e8          	mov	"-0x18(%rbp),%rax"									
+    1247:	48 01 d0             	add	"%rdx,%rax"									
+    124a:	0f b6 10             	movzbl	"(%rax),%edx"									
+    124d:	8b 45 fc             	mov	"-0x4(%rbp),%eax"									
+    1250:	48 63 c8             	movslq	"%eax,%rcx"		o	o	o	o		o	FaultARM	"Skipping rcx = i for a2[i]. Traced back to init, g_cardPin = i + 1 = rcx. At loop end, ecx = 4 -> accesses a2[4] (out-of-bound). Zero-init makes this reachable."
+    1253:	48 8b 45 e0          	mov	"-0x20(%rbp),%rax"									
+    1257:	48 01 c8             	add	"%rcx,%rax"									
+    125a:	0f b6 00             	movzbl	"(%rax),%eax"									
+    125d:	38 c2                	cmp	"%al,%dl"									
+    125f:	74 07                	je	1268 <byteArrayCompare+0x49>									
+    1261:	b8 00 00 00 00       	mov	"$0x0,%eax"		o	o	o	o		o	FaultARM	"Skipping eax = 0 before ret. Since eax = a2[i] = g_cardPin, and it's non-zero -> secret reachable."
+    1266:	eb 12                	jmp	127a <byteArrayCompare+0x5b>		o	o	o	o		o	FaultARM	"Skipping jump to ret in a1 vs. a2 failure logic. Under Permanent, loop completes and reaches it."
+    1268:	83 45 fc 01          	addl	"$0x1,-0x4(%rbp)"									
+    126c:	0f b6 45 dc          	movzbl	"-0x24(%rbp),%eax"									
+    1270:	39 45 fc             	cmp	"%eax,-0x4(%rbp)"		o	o	o	o		o	FaultARM	"Skipping cmp I < size. In first iteration, tracing back to test %al, %al in verifyPIN at 1292. eax = g_ptc = 3 -> ZF, SF = 0. CF, OF unchanged -> SF non-negative -> jl does not jump -> exits with 1."
+    1273:	7c c8                	jl	123d <byteArrayCompare+0x1e>		o	o	o	o		o	FaultARM	Skipping the jl mentioned above -> always exit with 1.
+    1275:	b8 01 00 00 00       	mov	"$0x1,%eax"									
+    127a:	5d                   	pop	%rbp									
+    127b:	c3                   	ret										
+000000000000127c <verifyPIN>:												
+    127c:	f3 0f 1e fa          	endbr64										
+    1280:	55	push	%rbp									
+    1281:	48 89 e5             	mov	"%rsp,%rbp"									
+    1284:	c6 05 86 2d 00 00 00 	movb	"$0x0,0x2d86(%rip) "	       # 4011 <g_authenticated>								
+    128b:	0f b6 05 80 2d 00 00 	movzbl	"0x2d80(%rip),%eax"	        # 4012 <g_ptc>								
+    1292:	84 c0                	test	"%al,%al"									
+    1294:	7e 4e                	jle	12e4 <verifyPIN+0x68>									
+    1296:	ba 04 00 00 00       	mov	"$0x4,%edx"									
+    129b:	48 8d 05 76 2d 00 00 	lea	"0x2d76(%rip),%rax "	       # 4018 <g_cardPin>								
+    12a2:	48 89 c6             	mov	"%rax,%rsi"									Skipping set of byteArrayCompare argument g_cardPin ($rsi). rsi used as-is; points to already populated data -> false positive.
+    12a5:	48 8d 05 68 2d 00 00 	lea	"0x2d68(%rip),%rax"	        # 4014 <g_userPin>	o	o	o	o		o	FaultARM	Skipping load of g_userPin to rax. Prior value of rax is g_cardPin -> a1 = a2 -> always True.
+    12ac:	48 89 c7             	mov	"%rax,%rdi"									
+    12af:	e8 6b ff ff ff       	call	121f <byteArrayCompare>									
+    12b4:	3c 01                	cmp	"$0x1,%al"									
+    12b6:	75 15                	jne	12cd <verifyPIN+0x51>		o	o	o	o		o	FaultARM	Skipping jump to failure logic after byteArrayCompare.
+    12b8:	c6 05 53 2d 00 00 03 	movb	"$0x3,0x2d53(%rip)"	        # 4012 <g_ptc>								
+    12bf:	c6 05 4b 2d 00 00 01 	movb	"$0x1,0x2d4b(%rip) "	       # 4011 <g_authenticated>								
+    12c6:	b8 01 00 00 00       	mov	"$0x1,%eax"									
+    12cb:	eb 1c                	jmp	12e9 <verifyPIN+0x6d>									
+    12cd:	0f b6 05 3e 2d 00 00 	movzbl	"0x2d3e(%rip),%eax"	        # 4012 <g_ptc>								
+    12d4:	83 e8 01             	sub	"$0x1,%eax"									
+    12d7:	88 05 35 2d 00 00    	mov	"%al,0x2d35(%rip)"	        # 4012 <g_ptc>								
+    12dd:	b8 00 00 00 00       	mov	"$0x0,%eax"									
+    12e2:	eb 05                	jmp	12e9 <verifyPIN+0x6d>									
+    12e4:	b8 00 00 00 00       	mov	"$0x0,%eax"									
+    12e9:	5d                   	pop	%rbp									
+    12ea:	c3                   	ret				o	o			o	Success condition	ret in VerifyPin leads directly to secret -> correct path.
+00000000000012eb <super_secret_function>:												
+    12eb:	f3 0f 1e fa          	endbr64										
+    12ef:	55	push	%rbp									
+    12f0:	48 89 e5             	mov	"%rsp,%rbp"									
+    12f3:	90	nop										
+    12f4:	5d                   	pop	%rbp									
+    12f5:	c3                   	ret										
+00000000000012f6 <main>:												
+    12f6:	f3 0f 1e fa          	endbr64										
+    12fa:	55	push	%rbp									
+    12fb:	48 89 e5             	mov	"%rsp,%rbp"									
+    12fe:	e8 58 fe ff ff       	call	115b <initialize>									
+    1303:	e8 74 ff ff ff       	call	127c <verifyPIN>									
