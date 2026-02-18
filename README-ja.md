@@ -2,7 +2,7 @@
 
 [English README is here](./README.md)
 
-A Binary-Level Benchmark Dataset for Fault Injection Vulnerability Detection
+A Binary-Level Benchmark Dataset for Fault Injection Vulnerability Detection  
 発音: **/ˈfaɪvɪnbɛntʃ/** （ファイヴィンベンチ）または **/ˈfɪvɪnbɛntʃ/** （フィヴビンベンチ）
 
 ## 概要
@@ -157,8 +157,10 @@ Extracted Fault Addresses: 16
   author = {Nashimoto, Shoei},
   title = {{Improving Fault Vulnerability Detection via Rehosting and Comparative Analysis of Open-Source Tools}},
   booktitle={2025 Workshop on Fault Detection and Tolerance in Cryptography (FDTC)},
-  pages={TBD},
+  volume={},
+  number={},
+  pages={23-34},
   year = {2025},
-  organization={IEEE}
+  doi={10.1109/FDTC68360.2025.00011}
 }
 ```
